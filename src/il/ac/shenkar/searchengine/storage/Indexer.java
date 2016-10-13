@@ -1,5 +1,6 @@
 package il.ac.shenkar.searchengine.storage;
 
+import il.ac.shenkar.searchengine.utils.Hits;
 import il.ac.shenkar.searchengine.utils.PostingData;
 import il.ac.shenkar.searchengine.utils.Utils;
 
@@ -8,7 +9,7 @@ import java.util.*;
 
 public class Indexer {
 
-    private Map<String, PostingData> indexMap;
+    private Map<String, Map<String, Integer>> indexMap;
     private Parser parser;
     private File indexFile;
 
@@ -28,9 +29,26 @@ public class Indexer {
     public void index(File toAdd) throws IOException {
         ArrayList<String> wordsFound = parser.parse(toAdd);
         ArrayList<String> goodWords = parser.blackList(wordsFound);
-        Set<Object> unique = parser.findDuplicates(goodWords);
+        indexMap = new HashMap<>();
+        goodWords.forEach((word)-> {
+            if(indexMap.containsKey(word)) {
+                System.out.println("exists");
+                Map<String, Integer> hits = new HashMap<>();
+                if(indexMap.get(word).containsKey(toAdd.getName())) {
+                    hits.put(toAdd.getName(), indexMap.get(word).get(toAdd.getName()) + 1);
+                }
+                indexMap.put(word, hits);
+            }
+            else {
+                System.out.println("new word");
+                Map<String, Integer> firstHit = new HashMap<>();
+                firstHit.put(toAdd.getName(), 1);
+                indexMap.put(word, firstHit);
+            }
+        });
 
 
+        System.out.println("done");
 
 //        String serial = String.valueOf(System.currentTimeMillis());
 //        File storedFile = new File("./storage/" + toAdd.getName() + serial + ".txt");

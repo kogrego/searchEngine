@@ -1,5 +1,6 @@
 package il.ac.shenkar.searchengine.storage;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import il.ac.shenkar.searchengine.utils.Utils;
 
 import java.io.File;
@@ -8,6 +9,8 @@ import java.util.*;
 
 
 public class Parser {
+
+    //TODO:find a solution for parsing single  quotes
 
     public ArrayList<String> parse(File toParse) throws FileNotFoundException {
         Scanner sc = new Scanner(toParse);
