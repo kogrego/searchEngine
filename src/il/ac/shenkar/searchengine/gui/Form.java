@@ -1,12 +1,15 @@
 package il.ac.shenkar.searchengine.gui;
 
+import il.ac.shenkar.searchengine.storage.Indexer;
+import il.ac.shenkar.searchengine.utils.Utils;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
 
 public class Form extends JFrame {
     private JPanel rootPanel;
@@ -21,7 +24,6 @@ public class Form extends JFrame {
 
     public Form() {
         super("search engine");
-
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File("./input"));
         fileChooser.setDialogTitle("Search Engine");
@@ -48,10 +50,15 @@ public class Form extends JFrame {
                 fileChooser.showOpenDialog(loadButton);
                 File[] files = fileChooser.getSelectedFiles();
                 String paths = "loaded files:";
+                Indexer indexer = new Indexer();
                 for(File file : files) {
                     String path = file.getPath();
                     paths += path + " ";
-
+                    try {
+                        indexer.index(file);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                 }
                 selectedFilesLabel.setText(paths);
             }

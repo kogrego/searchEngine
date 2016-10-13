@@ -1,16 +1,20 @@
 package il.ac.shenkar.searchengine.utils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Seymore on 10/12/2016.
  */
 public class PostingData implements Serializable{
     private String word;
-    private int numOfFiles;
-    private Map<String, Integer> hits;
-    private boolean valid;
+    private Set<Hits> hits;
+
+    public PostingData(String word, Set<Hits> hits) {
+
+    }
 
     public String getWord() {
         return word;
@@ -20,38 +24,12 @@ public class PostingData implements Serializable{
         this.word = word;
     }
 
-    public int getNumOfFiles() {
-        return numOfFiles;
-    }
-
-    public void setNumOfFiles(int numOfFiles) {
-        this.numOfFiles = numOfFiles;
-    }
-
-    public Map<String, Integer> getHits() {
+    public Set<Hits> getHits() {
         return hits;
     }
 
-    public void setHits(Map<String, Integer> hits) {
+    public void setHits(Set<Hits> hits) {
         this.hits = hits;
-    }
-
-    public boolean isValid() {
-        return valid;
-    }
-
-    public void setValid(boolean valid) {
-        this.valid = valid;
-    }
-
-    @Override
-    public String toString() {
-        return "PostingData{" +
-                "word='" + word + '\'' +
-                ", numOfFiles=" + numOfFiles +
-                ", hits=" + hits.toString() +
-                ", valid=" + valid +
-                '}';
     }
 }
 
