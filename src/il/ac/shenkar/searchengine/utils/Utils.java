@@ -1,6 +1,6 @@
 package il.ac.shenkar.searchengine.utils;
 
-import java.io.File;
+import java.io.*;
 
 public class Utils {
     private static final String[] blackList = {"on", "ON", "On", "in", "IN", "In", "to", "TO", "To",
@@ -26,5 +26,17 @@ public class Utils {
             posting = new File(POSTING);
         }
         return posting;
+    }
+
+    public static void storeFile(File src, File dest) throws IOException {
+        InputStream is = new FileInputStream(src);
+        OutputStream os = new FileOutputStream(dest);
+        byte[] buffer = new byte[1024];
+        int length;
+        while((length = is.read(buffer)) > 0) {
+            os.write(buffer, 0, length);
+        }
+        is.close();
+        os.close();
     }
 }

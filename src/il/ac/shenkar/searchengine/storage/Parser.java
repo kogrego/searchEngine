@@ -15,16 +15,15 @@ public class Parser {
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
             String parsedLine = line.replaceAll("[^\\w\\s]", " ");
-            String fixedLine = parsedLine.replace("  ", " ");
-            Collections.addAll(words, fixedLine.split(" "));
+            parsedLine = parsedLine.replace("  ", "");
+            if(parsedLine == null || parsedLine.isEmpty()) {
+                continue;
+            }
+            Collections.addAll(words, parsedLine.split(" "));
         }
         return words;
     }
 
-//    public ArrayList<String> sort(ArrayList<String> unsortedWords) {
-//        //
-//    }
-//
     public ArrayList<String> blackList(ArrayList<String> words) {
         ArrayList<String> unique = new ArrayList<>(words);
         List<String> blacklist =  Arrays.asList(Utils.getBlackList());
@@ -32,5 +31,16 @@ public class Parser {
         return unique;
     }
 
-
+    public Set<Object> findDuplicates(ArrayList<String> list) {
+        Set<Object> items = new HashSet<Object>();
+        Set<Object> duplicates = new HashSet<Object>();
+        for (Object item : list) {
+            if (items.contains(item)) {
+                duplicates.add(item);
+            } else {
+                items.add(item);
+            }
+        }
+        return duplicates;
+    }
 }

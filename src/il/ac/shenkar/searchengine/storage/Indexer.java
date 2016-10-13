@@ -26,21 +26,25 @@ public class Indexer {
     }
 
     public void index(File toAdd) throws IOException {
-        String serial = String.valueOf(System.currentTimeMillis());
-        File storedFile = new File("./storage/" + toAdd.getName() + serial + ".txt");
-        ArrayList<String> wordsFound = parser.parse(toAdd); // Todo://use stored file instead of original
+        ArrayList<String> wordsFound = parser.parse(toAdd);
         ArrayList<String> goodWords = parser.blackList(wordsFound);
+        Set<Object> unique = parser.findDuplicates(goodWords);
 
-//        Scanner sc = new Scanner(toAdd.getName());
-//        String fileData = "";
-//        while (sc.hasNextLine()){
-//            fileData += sc.nextLine() + "\n";
-//        }
+
+
+//        String serial = String.valueOf(System.currentTimeMillis());
+//        File storedFile = new File("./storage/" + toAdd.getName() + serial + ".txt");
 //        String header = "# MetaData\n #" + "Serial: " + serial + "\n";
-//        PrintWriter pw = new PrintWriter(storedFile.getName());
-//        pw.println(header);
-//        pw.println(fileData);
-//        pw.close();
+//        InputStream is = new FileInputStream(toAdd);
+//        OutputStream os = new FileOutputStream(storedFile);
+//        byte[] buffer = new byte[1024];
+//        int length;
+//        while((length = is.read(buffer)) > 0) {
+//            os.write(buffer, 0, length);
+//        }
+//        is.close();
+//        os.close();
+
 //
 //        for(PostingData ps: parsedFile){
 //            PostingData fileList = null;
