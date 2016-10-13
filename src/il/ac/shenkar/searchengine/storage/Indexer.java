@@ -73,11 +73,11 @@ public class Indexer {
         if (index == null){
             throw new IllegalStateException("index is empty");
         }
-        index.forEach((k, v) -> {
-            v.getHits().forEach((key, val)->{
+        index.forEach((word, pd) -> {
+            pd.getHits().forEach((key, val)->{
                 if(key.equals(fileName)){
-                    v.setValid(false);
-                    v.setNumOfFiles(v.getNumOfFiles() - 1);
+                    pd.setValid(false);
+                    pd.setNumOfFiles(pd.getNumOfFiles() - 1);
                 }
             });
         });

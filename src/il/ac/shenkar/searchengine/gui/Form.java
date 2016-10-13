@@ -5,37 +5,48 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
 
-/**
- * Created by Seymore on 10/13/2016.
- */
 public class Form extends JFrame {
-    private JButton loadFileSButton;
     private JPanel rootPanel;
     private JTextField searchField;
     private JButton searchButton;
+    private JButton loadButton;
+    private JPanel searchPanel;
     private JLabel searchLabel;
+    private JLabel appName;
+    private JLabel selectedFilesLabel;
 
     public Form() {
         super("search engine");
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File("./input"));
+        fileChooser.setDialogTitle("Search Engine");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
         setContentPane(rootPanel);
 
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        loadFileSButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // process file
-            }
-        });
-
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 searchLabel.setText("results for: " + searchField.getText());
                 // search
+
+            }
+        });
+
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(fileChooser.showOpenDialog(loadButton) == JFileChooser.APPROVE_OPTION) {
+                    //
+                }
+                selectedFilesLabel.setText("you chose to load: " + fileChooser.getSelectedFile().getAbsolutePath());
+                //load
             }
         });
 
