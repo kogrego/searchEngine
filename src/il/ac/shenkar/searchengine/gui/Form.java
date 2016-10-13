@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.ArrayList;
 
 public class Form extends JFrame {
     private JPanel rootPanel;
@@ -15,6 +16,7 @@ public class Form extends JFrame {
     private JPanel searchPanel;
     private JLabel searchLabel;
     private JLabel appName;
+    private JPanel loadPanel;
     private JLabel selectedFilesLabel;
 
     public Form() {
@@ -24,6 +26,7 @@ public class Form extends JFrame {
         fileChooser.setCurrentDirectory(new File("./input"));
         fileChooser.setDialogTitle("Search Engine");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setMultiSelectionEnabled(true);
 
         setContentPane(rootPanel);
 
@@ -42,11 +45,15 @@ public class Form extends JFrame {
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(fileChooser.showOpenDialog(loadButton) == JFileChooser.APPROVE_OPTION) {
-                    //
+                fileChooser.showOpenDialog(loadButton);
+                File[] files = fileChooser.getSelectedFiles();
+                String paths = "loaded files:";
+                for(File file : files) {
+                    String path = file.getPath();
+                    paths += path + " ";
+
                 }
-                selectedFilesLabel.setText("you chose to load: " + fileChooser.getSelectedFile().getAbsolutePath());
-                //load
+                selectedFilesLabel.setText(paths);
             }
         });
 
