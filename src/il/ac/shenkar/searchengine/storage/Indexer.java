@@ -1,6 +1,7 @@
 package il.ac.shenkar.searchengine.storage;
 
 import il.ac.shenkar.searchengine.utils.Hits;
+import il.ac.shenkar.searchengine.utils.Utils;
 
 import java.io.*;
 import java.util.*;
@@ -12,15 +13,7 @@ public class Indexer {
     private File indexFile;
 
     public Indexer(){
-        indexMap = new HashMap<>();
-//        indexFile = Utils.getIndex();
-//        FileInputStream fis;
-//        ObjectInputStream ois;
-//        fis = new FileInputStream(indexFile.getName());
-//        ois = new ObjectInputStream(fis);
-//        indexMap = (Map<String, PostingData>)ois.readObject();
-//        fis.close();
-//        ois.close();
+        indexMap = Utils.getMap();
         parser = new Parser();
     }
 
@@ -54,7 +47,7 @@ public class Indexer {
 
 //        String serial = String.valueOf(System.currentTimeMillis());
 //        File storedFile = new File("./storage/" + toAdd.getName() + serial + ".txt");
-//        String header = "# MetaData\n #" + "Serial: " + serial + "\n";
+//        String header = "# MetaData\n # " + "Serial: " + serial + "\n";
 //        InputStream is = new FileInputStream(toAdd);
 //        OutputStream os = new FileOutputStream(storedFile);
 //        byte[] buffer = new byte[1024];
@@ -95,17 +88,29 @@ public class Indexer {
 //        oos.close();
     }
 
-    public void remove(String fileName){
-//        if (indexMap == null){
-//            throw new IllegalStateException("index is empty");
-//        }
-//        indexMap.forEach((word, pd) -> {
-//            pd.getHits().forEach((key, val)->{
-//                if(key.equals(fileName)){
-//                    pd.setValid(false);
-//                    pd.setNumOfFiles(pd.getNumOfFiles() - 1);
-//                }
-//            });
-//        });
+    public void hide(String fileName){
+        if (indexMap == null){
+            throw new IllegalStateException("index is empty");
+        }
+        indexMap.forEach((word, data) -> {
+            Hits hit = data.get(fileName);
+            if(hit != null){
+                hit.setValid(false);
+                data.put(fileName, hit);
+            }
+        });
+    }
+
+    public void show(String fileName){
+        if (indexMap == null){
+            throw new IllegalStateException("index is empty");
+        }
+        indexMap.forEach((word, data) -> {
+            Hits hit = data.get(fileName);
+            if(hit != null){
+                hit.setValid(true);
+                data.put(fileName, hit);
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 package il.ac.shenkar.searchengine.gui;
 
+import il.ac.shenkar.searchengine.engine.Search;
 import il.ac.shenkar.searchengine.storage.Indexer;
 import il.ac.shenkar.searchengine.utils.Utils;
 
@@ -20,9 +21,12 @@ public class Form extends JFrame {
     private JLabel appName;
     private JPanel loadPanel;
     private JLabel selectedFilesLabel;
+    DefaultListModel<String> model;
+
 
     public Form() {
         super("search engine");
+
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File("./input"));
         fileChooser.setDialogTitle("Search Engine");
@@ -38,8 +42,8 @@ public class Form extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 searchLabel.setText("results for: " + searchField.getText());
-                // search
-
+                Search search = new Search();
+                search.search(searchField.getText());
             }
         });
 
@@ -54,7 +58,7 @@ public class Form extends JFrame {
                     String serial = String.valueOf(System.currentTimeMillis());
                     File storedFile = new File("./storage/" + file.getName() + serial + ".txt");
                     try {
-                        Utils.storeFile(file, storedFile);
+                        Utils.storeFile(file, storedFile, serial);
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
@@ -70,6 +74,18 @@ public class Form extends JFrame {
             }
         });
 
+//        hideFilesSButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                fileChooser.showOpenDialog(loadButton);
+//                File[] files = fileChooser.getSelectedFiles();
+//                Indexer indexer = new Indexer();
+//                for(File file : files) {
+//                    indexer.remove(file.getName());
+//                }
+//            }
+//        });
+
         searchField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -81,4 +97,5 @@ public class Form extends JFrame {
 
         setVisible(true);
     }
+
 }
