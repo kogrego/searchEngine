@@ -1,11 +1,13 @@
 package il.ac.shenkar.searchengine.storage;
 
+import il.ac.shenkar.searchengine.utils.Hits;
+
 import java.io.*;
 import java.util.*;
 
 public class Indexer {
 
-    private Map<String, Map<String, Integer>> indexMap;
+    private Map<String, Map<String, Hits>> indexMap;
     private Parser parser;
     private File indexFile;
 
@@ -27,21 +29,28 @@ public class Indexer {
         ArrayList<String> goodWords = parser.blackList(wordsFound);
         goodWords.forEach((word)-> {
             if(indexMap.containsKey(word)) {
-                Map<String, Integer> hits = indexMap.get(word);
+                Map<String, Hits> hits = indexMap.get(word);
                 if(indexMap.get(word).containsKey(toAdd.getName())) {
-                    hits.put(toAdd.getName(), indexMap.get(word).get(toAdd.getName()) + 1);
+                    Hits hit = hits.get(toAdd.getName());
+                    hit.setNumOfHits(hit.getNumOfHits() + 1);
+                    hits.put(toAdd.getName(), hit);
                 }
                 else {
-                    hits.put(toAdd.getName(), 1);
+                    Hits hit = new Hits(1, true);
+                    hits.put(toAdd.getName(), hit);
                 }
                 indexMap.put(word, hits);
             }
             else {
-                Map<String, Integer> firstHit = new HashMap<>();
-                firstHit.put(toAdd.getName(), 1);
+                Map<String, Hits> firstHit = new HashMap<>();
+                Hits hit = new Hits(1, true);
+                firstHit.put(toAdd.getName(), hit);
                 indexMap.put(word, firstHit);
             }
         });
+
+
+        System.out.println("done");
 
 //        String serial = String.valueOf(System.currentTimeMillis());
 //        File storedFile = new File("./storage/" + toAdd.getName() + serial + ".txt");

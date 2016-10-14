@@ -1,21 +1,17 @@
 package il.ac.shenkar.searchengine.utils;
 
+import java.io.Serializable;
+
 /**
  * Created by Seymore on 10/12/2016.
  */
-public class Hits {
-    private String fileName;
+public class Hits implements Serializable{
     private int numOfHits;
     private boolean isValid;
 
-    public Hits(String fileName, int numOfHits, boolean isValid) {
-        this.fileName = fileName;
+    public Hits(int numOfHits, boolean isValid) {
         this.numOfHits = numOfHits;
         this.isValid = isValid;
-    }
-
-    public String getFileName() {
-        return fileName;
     }
 
     public int getNumOfHits() {
@@ -24,10 +20,6 @@ public class Hits {
 
     public boolean isValid() {
         return isValid;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
     public void setNumOfHits(int numOfHits) {
@@ -41,8 +33,7 @@ public class Hits {
     @Override
     public String toString() {
         return "Hits{" +
-                "fileName='" + fileName + '\'' +
-                ", numOfHits=" + numOfHits +
+                " numOfHits=" + numOfHits +
                 ", isValid=" + isValid +
                 '}';
     }

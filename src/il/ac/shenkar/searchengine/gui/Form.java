@@ -58,13 +58,13 @@ public class Form extends JFrame {
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
-                    String path = file.getPath();
-                    paths += path + " ";
                     try {
                         indexer.index(storedFile);
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
+                    String path = file.getPath();
+                    paths += path + " ";
                 }
                 selectedFilesLabel.setText(paths);
             }
