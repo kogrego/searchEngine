@@ -4,7 +4,7 @@ import java.io.*;
 
 public class Utils {
     private static final String[] blackList = {"on", "ON", "On", "in", "IN", "In", "to", "TO", "To",
-                                                "A", "a", "an", "AN", "An", "the", "The", "THE"};
+                                                "A", "a", "an", "AN", "An", "the", "The", "THE", ""};
     private static File index;
     private static File posting;
     private static final String INDEX = "./index.txt";
