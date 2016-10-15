@@ -46,26 +46,27 @@ public class Utils {
         return dest;
     }
 
-    public static void saveMapToFile(Map<String,Map<Integer, Hits>> map) throws IOException {
-        OutputStream file = new FileOutputStream(INDEX);
-        OutputStream buffer = new BufferedOutputStream(file);
-        ObjectOutput output = new ObjectOutputStream(buffer);
-        output.writeObject(map);
-        file.close();
-        buffer.close();
-        output.close();
+    public static void saveMapToFile() throws IOException {
+        //TODO: not working
+//        OutputStream file = new FileOutputStream(INDEX);
+//        ObjectOutput output = new ObjectOutputStream(file);
+//        if (map != null) {
+//            output.writeObject(map);
+//        }
+//        file.close();
+//        output.close();
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<String,Map<Integer, Hits>> getMapFromFile() throws IOException, ClassNotFoundException {
-        InputStream file = new FileInputStream(INDEX);
-        InputStream buffer = new BufferedInputStream(file);
-        ObjectInput input = new ObjectInputStream (buffer);
-        Map<String,Map<Integer, Hits>> indexMap = (Map<String, Map<Integer, Hits>>) input.readObject();
-        file.close();
-        buffer.close();
-        input.close();
-        return indexMap;
+    public static void getMapFromFile() throws IOException, ClassNotFoundException {
+        //TODO: not working
+//        InputStream file = new FileInputStream(INDEX);
+//        if(file.read() > 0) {
+//            ObjectInput input = new ObjectInputStream(file);
+//            map = (Map<String, Map<String, Hits>>) input.readObject();
+//            input.close();
+//        }
+//        file.close();
     }
 
 }
