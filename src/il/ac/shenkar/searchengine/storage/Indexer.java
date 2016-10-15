@@ -10,7 +10,6 @@ public class Indexer {
 
     private Map<String, Map<String, Hits>> indexMap;
     private Parser parser;
-    private File indexFile;
 
     public Indexer(){
         indexMap = Utils.getMap();
@@ -41,51 +40,7 @@ public class Indexer {
                 indexMap.put(word, firstHit);
             }
         });
-
-
         System.out.println("done");
-
-//        String serial = String.valueOf(System.currentTimeMillis());
-//        File storedFile = new File("./storage/" + toAdd.getName() + serial + ".txt");
-//        String header = "# MetaData\n # " + "Serial: " + serial + "\n";
-//        InputStream is = new FileInputStream(toAdd);
-//        OutputStream os = new FileOutputStream(storedFile);
-//        byte[] buffer = new byte[1024];
-//        int length;
-//        while((length = is.read(buffer)) > 0) {
-//            os.write(buffer, 0, length);
-//        }
-//        is.close();
-//        os.close();
-
-//
-//        for(PostingData ps: parsedFile){
-//            PostingData fileList = null;
-//            if(indexMap != null) {
-//                fileList = indexMap.get(ps.getWord());
-//            }
-//            if(fileList == null){
-//                fileList = new PostingData();
-//                fileList.setWord(ps.getWord());
-//                fileList.setNumOfFiles(ps.getHits().size());
-//                fileList.setHits(ps.getHits());
-//            }
-//            else{
-//                fileList.setNumOfFiles(ps.getNumOfFiles() + 1);
-//                Map<String, Integer> hits = ps.getHits();
-//                fileList.getHits().put(ps.getWord() , hits.get(ps.getWord()));
-//            }
-//
-//            indexMap.put(ps.getWord(), fileList);
-//        }
-////        PrintWriter writer = new PrintWriter(indexFile);
-////        writer.print("");
-////        writer.close();
-//        FileOutputStream fos = new FileOutputStream(indexFile.getName());
-//        ObjectOutputStream oos = new ObjectOutputStream(fos);
-//        oos.writeObject(indexMap);
-//        fos.close();
-//        oos.close();
     }
 
     public void hide(String fileName){

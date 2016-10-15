@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Utils {
-    private static final String[] blackList = {"on", "ON", "On", "in", "IN", "In", "to", "TO", "To",
-                                                "A", "a", "an", "AN", "An", "the", "The", "THE", ""};
+    private static final String[] blackList = {"on", "in", "to", "a", "an", "the", "i", "is", "it", "as",
+                                                "was", "so", "his", "has", ""};
     private static File index;
     private static Map<String, Map<String, Hits>> map;
     private static final String INDEX = "./index.ser";
@@ -29,7 +29,9 @@ public class Utils {
         return map;
     }
 
-    public static void storeFile(File src, File dest, String serial) throws IOException {
+    public static File storeFile(File src) throws IOException {
+        String serial = String.valueOf(System.currentTimeMillis());
+        File dest = new File("./storage/" + src.getName() + serial + ".txt");
         InputStream is = new FileInputStream(src);
         OutputStream os = new FileOutputStream(dest);
         String head = "# MetaData \n# Serial: " + serial + "\n";
@@ -41,6 +43,7 @@ public class Utils {
         }
         is.close();
         os.close();
+        return dest;
     }
 
     public static void saveMapToFile(Map<String,Map<Integer, Hits>> map) throws IOException {
