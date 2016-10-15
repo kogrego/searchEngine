@@ -3,14 +3,11 @@ package il.ac.shenkar.searchengine.gui;
 import il.ac.shenkar.searchengine.engine.Search;
 import il.ac.shenkar.searchengine.storage.Indexer;
 import il.ac.shenkar.searchengine.utils.Utils;
-import org.apache.lucene.queryparser.classic.ParseException;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.*;
+import java.util.ArrayList;
 
 public class Form extends JFrame {
     private JPanel rootPanel;
@@ -27,7 +24,6 @@ public class Form extends JFrame {
 
     public Form() {
         super("search engine");
-
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File("./input"));
         fileChooser.setDialogTitle("Search Engine");
@@ -37,16 +33,25 @@ public class Form extends JFrame {
         setContentPane(rootPanel);
 
         pack();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                try {
+                    Utils.saveMapToFile();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                System.exit(0);
+            }
+        });
 
         searchButton.addActionListener(e -> {
             searchLabel.setText("results for: " + searchField.getText());
             Search search = new Search();
-            try {
-                search.search(searchField.getText());
-            } catch (ParseException e1) {
-                e1.printStackTrace();
-            }
+            ArrayList<String> results = search.search(searchField.getText());
+            System.out.println("done");
         });
 
         loadButton.addActionListener(e -> {
@@ -54,7 +59,7 @@ public class Form extends JFrame {
             File[] files = fileChooser.getSelectedFiles();
             String paths = "loaded files:";
             Indexer indexer = new Indexer();
-            for(File file : files) {
+            for (File file : files) {
                 try {
                     File storedFile = Utils.storeFile(file);
                     indexer.index(storedFile);
@@ -82,7 +87,7 @@ public class Form extends JFrame {
         searchField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     searchLabel.setText("results for: " + searchField.getText());
                 }
             }
