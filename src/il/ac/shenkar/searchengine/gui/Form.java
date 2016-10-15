@@ -3,6 +3,7 @@ package il.ac.shenkar.searchengine.gui;
 import il.ac.shenkar.searchengine.engine.Search;
 import il.ac.shenkar.searchengine.storage.Indexer;
 import il.ac.shenkar.searchengine.utils.Utils;
+import org.apache.lucene.queryparser.classic.ParseException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -38,40 +39,32 @@ public class Form extends JFrame {
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                searchLabel.setText("results for: " + searchField.getText());
-                Search search = new Search();
+        searchButton.addActionListener(e -> {
+            searchLabel.setText("results for: " + searchField.getText());
+            Search search = new Search();
+            try {
                 search.search(searchField.getText());
+            } catch (ParseException e1) {
+                e1.printStackTrace();
             }
         });
 
-        loadButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                fileChooser.showOpenDialog(loadButton);
-                File[] files = fileChooser.getSelectedFiles();
-                String paths = "loaded files:";
-                Indexer indexer = new Indexer();
-                for(File file : files) {
-                    String serial = String.valueOf(System.currentTimeMillis());
-                    File storedFile = new File("./storage/" + file.getName() + serial + ".txt");
-                    try {
-                        Utils.storeFile(file, storedFile, serial);
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                    try {
-                        indexer.index(storedFile);
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                    String path = file.getPath();
-                    paths += path + " ";
+        loadButton.addActionListener(e -> {
+            fileChooser.showOpenDialog(loadButton);
+            File[] files = fileChooser.getSelectedFiles();
+            String paths = "loaded files:";
+            Indexer indexer = new Indexer();
+            for(File file : files) {
+                try {
+                    File storedFile = Utils.storeFile(file);
+                    indexer.index(storedFile);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
                 }
-                selectedFilesLabel.setText(paths);
+                String path = file.getPath();
+                paths += path + " ";
             }
+            selectedFilesLabel.setText(paths);
         });
 
 //        hideFilesSButton.addActionListener(new ActionListener() {
