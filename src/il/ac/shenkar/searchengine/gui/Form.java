@@ -31,6 +31,7 @@ public class Form extends JFrame {
     private JButton backButton;
     private JScrollPane docScrollPanel;
     private JScrollPane resultsScrollPanel;
+    private JPanel toolBar;
     DefaultListModel<String> model;
     private ArrayList<String> searchTerms;
 
@@ -41,14 +42,17 @@ public class Form extends JFrame {
         this.setSize(1024, 720);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setLocationRelativeTo(null);
-        docScrollPanel.setBorder(BorderFactory.createEmptyBorder());
+
         resultsScrollPanel.setBorder(BorderFactory.createEmptyBorder());
-        JFileChooser fileChooser = new JFileChooser();
+
+        CenteredFileChooser fileChooser = new CenteredFileChooser();
         fileChooser.setCurrentDirectory(new File("./input"));
         fileChooser.setDialogTitle("Search Engine");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setMultiSelectionEnabled(true);
+
         setContentPane(rootPanel);
+
         searchTerms = new ArrayList<>();
 
         this.addWindowListener(new WindowAdapter() {
@@ -94,6 +98,7 @@ public class Form extends JFrame {
                                 e1.printStackTrace();
                             }
                         }));
+                        docScrollPanel.setBorder(BorderFactory.createEmptyBorder());
                         docPanel.setVisible(true);
                         this.setContentPane(docPanel);
                         this.invalidate();
