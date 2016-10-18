@@ -238,8 +238,8 @@ public class Search {
         return parse(words, parsedWords);
     }
 
-    public Map<String,ArrayList<Integer>> showDocument(String filename, ArrayList<String> searchWords) throws IOException {
-        Map<String, ArrayList<Integer>> returnDoc = new HashMap<>();
+    public Map<String, Map<String,ArrayList<Integer>>> showDocument(String filename, ArrayList<String> searchWords) throws IOException {
+        Map<String, Map<String,ArrayList<Integer>>> returnDoc = new HashMap<>();
         String sCurrentLine;
         String doc = "";
         filename = "./storage/" + filename;
@@ -250,19 +250,22 @@ public class Search {
                 doc += "\n";
             }
         }
+        String lowerDoc = doc.toLowerCase();
         br.close();
-        ArrayList<Integer> wordLoc = new ArrayList<>();
+        Map<String, ArrayList<Integer>> wordData = new HashMap<>();
         for(String word: searchWords){
             int lastIndex = 0;
+            ArrayList<Integer> wordLoc = new ArrayList<>();
             while (lastIndex != -1) {
-                lastIndex = doc.indexOf(word, lastIndex);
+                lastIndex = lowerDoc.indexOf(word, lastIndex);
                 if (lastIndex != -1) {
                     wordLoc.add(lastIndex);
                     lastIndex += word.length();
                 }
             }
+            wordData.put(word, wordLoc);
         }
-        returnDoc.put(doc, wordLoc);
+        returnDoc.put(doc, wordData);
         return returnDoc;
     }
 

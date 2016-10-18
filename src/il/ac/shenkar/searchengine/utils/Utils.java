@@ -53,8 +53,8 @@ public class Utils {
 
     @SuppressWarnings("unchecked")
     public static void getMapFromFile() throws IOException, ClassNotFoundException {
-        ObjectInput objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(INDEX)));
-        map = (Map<String, Map<String, Hits>>) objectInputStream.readObject();
+//        ObjectInput objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(INDEX)));
+  //      map = (Map<String, Map<String, Hits>>) objectInputStream.readObject();
     }
 
 }

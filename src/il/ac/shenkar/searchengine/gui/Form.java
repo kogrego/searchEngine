@@ -5,14 +5,13 @@ import il.ac.shenkar.searchengine.storage.Indexer;
 import il.ac.shenkar.searchengine.utils.Utils;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Form extends JFrame {
@@ -27,6 +26,11 @@ public class Form extends JFrame {
     private JLabel selectedFilesLabel;
     private JList searchResults;
     private JTextArea showDocument;
+    private JPanel docPanel;
+    private JButton printButton;
+    private JButton backButton;
+    private JScrollPane docScrollPanel;
+    private JScrollPane resultsScrollPanel;
     DefaultListModel<String> model;
     private ArrayList<String> searchTerms;
 
@@ -34,8 +38,11 @@ public class Form extends JFrame {
     @SuppressWarnings({"unchecked", "BoundFieldAssignment"})
     public Form() {
         super("search engine");
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(0, 0, screenSize.width, screenSize.height);
+        this.setSize(1024, 720);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setLocationRelativeTo(null);
+        docScrollPanel.setBorder(BorderFactory.createEmptyBorder());
+        resultsScrollPanel.setBorder(BorderFactory.createEmptyBorder());
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File("./input"));
         fileChooser.setDialogTitle("Search Engine");
@@ -69,20 +76,39 @@ public class Form extends JFrame {
         searchResults.addListSelectionListener(e -> {
             if(!e.getValueIsAdjusting()) {
                 Search search = new Search();
-                Map<String, ArrayList<Integer>> doc = null;
+                Map<String, Map<String,ArrayList<Integer>>> doc = null;
                 try {
                     doc = search.showDocument(searchResults.getSelectedValue().toString(), searchTerms);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
                 if (doc != null) {
-                    doc.forEach((text, locations) -> {
+                    doc.forEach((text, wordData) -> {
                         showDocument.setText(text);
+                        Highlighter highlighter = showDocument.getHighlighter();
+                        Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.pink);
+                        wordData.forEach((word, loc) -> loc.forEach((num)->{
+                            try {
+                                highlighter.addHighlight(num, num + word.length(), painter );
+                            } catch (BadLocationException e1) {
+                                e1.printStackTrace();
+                            }
+                        }));
+                        docPanel.setVisible(true);
+                        this.setContentPane(docPanel);
+                        this.invalidate();
+                        this.validate();
                     });
                 }
                 searchTerms.clear();
                 System.out.print("done");
             }
+        });
+
+        backButton.addActionListener(e -> {
+            this.setContentPane(rootPanel);
+            this.invalidate();
+            this.validate();
         });
 
         loadButton.addActionListener(e -> {
