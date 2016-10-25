@@ -1,15 +1,20 @@
 package il.ac.shenkar.searchengine.utils;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.*;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Utils {
     private static final String[] blackList = {"on", "in", "to", "a", "an", "the", "i", "is", "it", "as",
                                                 "was", "so", "his", "has", ""};
     private static File index;
     private static Map<String, Map<String, Hits>> map;
-    private static final String INDEX = "./index.ser";
+    private static final String INDEX = "./index.txt";
 
     public static String[] getBlackList() {
         return blackList;
@@ -47,14 +52,18 @@ public class Utils {
     }
 
     public static void saveMapToFile() throws IOException {
-        ObjectOutput objectOutputStream = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(INDEX, false)));
-        objectOutputStream.writeObject(map);
+        Gson gson = new Gson();
+        String json = gson.toJson(map);
+        BufferedWriter out = new BufferedWriter(new FileWriter(INDEX));
+        out.write(json);
+        out.close();
     }
 
-    @SuppressWarnings("unchecked")
     public static void getMapFromFile() throws IOException, ClassNotFoundException {
-//        ObjectInput objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(INDEX)));
-  //      map = (Map<String, Map<String, Hits>>) objectInputStream.readObject();
+        Gson gson = new Gson();
+        String json = new Scanner(new File(INDEX)).useDelimiter("\\Z").next();
+        Type type = new TypeToken<Map<String, Map<String, Hits>>>(){}.getType();
+        map = gson.fromJson(json, type);
     }
 
 }

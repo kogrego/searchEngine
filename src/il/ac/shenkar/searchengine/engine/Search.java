@@ -23,6 +23,7 @@ public class Search {
         }
         ArrayList<String> results = new ArrayList<>();
         int i = 0;
+        boolean notFlag = false;
         String tempWord;
         while (i < words.length) {
             switch (words[i]) {
@@ -46,6 +47,7 @@ public class Search {
                         }
                         temp += words[i + 1];
                         temp = temp.toLowerCase();
+                        temp = temp.replaceAll("\"", "");
                         parsedWords.add(temp);
                         Map<String, Hits> tempNot = indexMap.get(temp);
                         if (tempNot != null) {
@@ -71,6 +73,10 @@ public class Search {
                     }
                     break;
                 case "AND":
+                    if(words[i + 1].equals("NOT")){
+                        i++;
+                        notFlag = true;
+                    }
                     if (words[i + 1].startsWith("(")) {
                         ArrayList<String> newWords = new ArrayList<>();
                         while (!words[i + 1].endsWith(")")) {
@@ -94,9 +100,18 @@ public class Search {
                         }
                         temp += words[i + 1];
                         temp = temp.toLowerCase();
+                        temp = temp.replaceAll("\"", "");
                         parsedWords.add(temp);
                         Map<String, Hits> tempAnd = indexMap.get(temp);
                         if (tempAnd != null) {
+                            if(notFlag) {
+                                tempAnd.forEach((key, value) -> {
+                                    if (value.isValid()) {
+                                        results.remove(key);
+                                    }
+                                });
+                                notFlag = false;
+                            }
                             ArrayList<String> list = results.stream().filter(s -> tempAnd.keySet().contains(s) && tempAnd.get(s).isValid()).collect(Collectors.toCollection(ArrayList::new));
                             results.clear();
                             results.addAll(list);
@@ -107,6 +122,14 @@ public class Search {
                         parsedWords.add(tempWord);
                         Map<String, Hits> tempAnd = indexMap.get(tempWord);
                         if (tempAnd != null) {
+                            if(notFlag) {
+                                tempAnd.forEach((key, value) -> {
+                                    if (value.isValid()) {
+                                        results.remove(key);
+                                    }
+                                });
+                                notFlag = false;
+                            }
                             ArrayList<String> list = results.stream().filter(s -> tempAnd.keySet().contains(s) && tempAnd.get(s).isValid()).collect(Collectors.toCollection(ArrayList::new));
                             results.clear();
                             results.addAll(list);
@@ -115,6 +138,10 @@ public class Search {
                     }
                     break;
                 case "OR":
+                    if(words[i + 1].equals("NOT")){
+                        i++;
+                        notFlag = true;
+                    }
                     if (words[i + 1].startsWith("(")) {
                         ArrayList<String> newWords = new ArrayList<>();
                         while (!words[i + 1].endsWith(")")) {
@@ -139,9 +166,18 @@ public class Search {
                         }
                         temp += words[i + 1];
                         temp = temp.toLowerCase();
+                        temp = temp.replaceAll("\"", "");
                         parsedWords.add(temp);
                         Map<String, Hits> tempOr = indexMap.get(temp);
                         if (tempOr != null) {
+                            if(notFlag) {
+                                tempOr.forEach((key, value) -> {
+                                    if (value.isValid()) {
+                                        results.remove(key);
+                                    }
+                                });
+                                notFlag = false;
+                            }
                             Set<String> set = new HashSet<>();
                             set.addAll(results);
                             tempOr.forEach((key,value)->{
@@ -158,6 +194,14 @@ public class Search {
                         parsedWords.add(tempWord);
                         Map<String, Hits> tempOr = indexMap.get(tempWord);
                         if (tempOr != null) {
+                            if(notFlag) {
+                                tempOr.forEach((key, value) -> {
+                                    if (value.isValid()) {
+                                        results.remove(key);
+                                    }
+                                });
+                                notFlag = false;
+                            }
                             Set<String> set = new HashSet<>();
                             set.addAll(results);
                             tempOr.forEach((key,value)->{
@@ -196,6 +240,7 @@ public class Search {
                         }
                         temp += words[i];
                         temp = temp.toLowerCase();
+                        temp = temp.replaceAll("\"", "");
                         parsedWords.add(temp);
                         Map<String, Hits> tempDefault = indexMap.get(temp);
                         if (tempDefault != null) {
@@ -234,6 +279,9 @@ public class Search {
     }
 
     public ArrayList<String> search(String term, ArrayList<String> parsedWords) {
+        term = term.replace("(", " (");
+        term = term.replace(")", " )");
+        term = term.replace("  ", " ");
         String[] words = term.split(" ");
         return parse(words, parsedWords);
     }

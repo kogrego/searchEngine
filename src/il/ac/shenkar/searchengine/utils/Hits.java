@@ -2,9 +2,6 @@ package il.ac.shenkar.searchengine.utils;
 
 import java.io.Serializable;
 
-/**
- * Created by Seymore on 10/12/2016.
- */
 public class Hits implements Serializable{
     private int numOfHits;
     private boolean isValid;

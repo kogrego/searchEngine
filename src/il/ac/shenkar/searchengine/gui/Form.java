@@ -125,6 +125,7 @@ public class Form extends JFrame {
                 try {
                     File storedFile = Utils.storeFile(file);
                     indexer.index(storedFile);
+                    Utils.saveMapToFile();
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
