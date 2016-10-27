@@ -14,11 +14,11 @@ public class Utils {
     private static final String[] blackList = {"on", "in", "to", "a", "an", "the", "i", "is", "it", "as",
                                                 "was", "so", "his", "has", ""};
     private static File index;
-    private static File fileNames;
+    private static File storageFile;
     private static Map<String, Map<String, Hits>> map;
     private static final String INDEX = "./index.txt";
     private static ArrayList<String> storageFileNames;
-    private static final String FILE_NAMES = "./storage.txt";
+    private static final String STORAGE_FILE_NAME = "./storage.txt";
 
     public static String[] getBlackList() {
         return blackList;
@@ -31,8 +31,8 @@ public class Utils {
     }
 
     public static void getStoredFilesList() {
-        if(fileNames == null){
-            fileNames = new File(FILE_NAMES);
+        if(storageFile == null){
+            storageFile = new File(STORAGE_FILE_NAME);
         }
     }
 
@@ -52,15 +52,15 @@ public class Utils {
 
     public static File storeFile(File src) throws IOException {
         String serial = String.valueOf(System.currentTimeMillis());
-        String newFileName = src.getName() + serial + ".txt";
+        String newFileName =  serial + ".txt";
         if(storageFileNames == null){
             storageFileNames = new ArrayList<>();
         }
-        storageFileNames.add(newFileName);
+        storageFileNames.add(src.getName());
         File dest = new File("./storage/" + newFileName);
         InputStream is = new FileInputStream(src);
         OutputStream os = new FileOutputStream(dest);
-        String head = "# MetaData \n# Serial: " + serial + "\n";
+        String head = "# MetaData \n# original file name: " + src.getName() + "\n" ;
         os.write(head.getBytes());
         byte[] buffer = new byte[1024];
         int length;
@@ -79,7 +79,7 @@ public class Utils {
         indexOut.write(mapString);
         indexOut.close();
         String fileNames = gson.toJson(storageFileNames);
-        BufferedWriter namesOut = new BufferedWriter(new FileWriter(FILE_NAMES));
+        BufferedWriter namesOut = new BufferedWriter(new FileWriter(STORAGE_FILE_NAME));
         namesOut.write(fileNames);
         namesOut.close();
     }
@@ -95,7 +95,7 @@ public class Utils {
         }
         Type mapType = new TypeToken<Map<String, Map<String, Hits>>>(){}.getType();
         map = gson.fromJson(mapJson, mapType);
-        String namesJson = new Scanner(new File(FILE_NAMES)).useDelimiter("\\Z").next();
+        String namesJson = new Scanner(new File(STORAGE_FILE_NAME)).useDelimiter("\\Z").next();
         Type listType = new TypeToken<ArrayList<String>>(){}.getType();
         storageFileNames = gson.fromJson(namesJson, listType);
     }

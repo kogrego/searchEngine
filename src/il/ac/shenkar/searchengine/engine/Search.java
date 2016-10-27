@@ -16,7 +16,7 @@ public class Search {
         this.indexMap = Utils.getMap();
     }
 
-    private ArrayList<String> parse(String[] words, ArrayList<String> parsedWords) throws IllegalStateException {
+    private ArrayList<String> tokenize(String[] words, ArrayList<String> parsedWords) throws IllegalStateException {
         if (indexMap == null) {
             throw new IllegalStateException("Index file empty");
         }
@@ -35,7 +35,7 @@ public class Search {
                             i++;
                         }
                         newWords.add(words[i + 1].replaceAll("[()]", ""));
-                        results.removeAll(parse(newWords.toArray(new String[newWords.size()]), parsedWords));
+                        results.removeAll(tokenize(newWords.toArray(new String[newWords.size()]), parsedWords));
                         i+=2;
                     } else if (words[i + 1].startsWith("\"")) {
                         String temp = "";
@@ -85,7 +85,7 @@ public class Search {
                         }
                         newWords.add(words[i + 1].replaceAll("[()]", ""));
                         ArrayList<String> list = new ArrayList<>();
-                        ArrayList<String> tempList = parse(newWords.toArray(new String[newWords.size()]), parsedWords);
+                        ArrayList<String> tempList = tokenize(newWords.toArray(new String[newWords.size()]), parsedWords);
                         list.addAll(tempList.stream().filter(tempList::contains).collect(Collectors.toList()));
                         results.clear();
                         results.addAll(list);
@@ -149,7 +149,7 @@ public class Search {
                             i++;
                         }
                         newWords.add(words[i + 1].replaceAll("[()]", ""));
-                        ArrayList<String> tempList = parse(newWords.toArray(new String[newWords.size()]), parsedWords);
+                        ArrayList<String> tempList = tokenize(newWords.toArray(new String[newWords.size()]), parsedWords);
                         Set<String> set = new HashSet<>();
                         set.addAll(tempList);
                         set.addAll(results);
@@ -225,7 +225,7 @@ public class Search {
                             i++;
                         }
                         newWords.add(words[i].replaceAll("[()]", ""));
-                        ArrayList<String> tempList = parse(newWords.toArray(new String[newWords.size()]), parsedWords);
+                        ArrayList<String> tempList = tokenize(newWords.toArray(new String[newWords.size()]), parsedWords);
                         Set<String> set = new HashSet<>();
                         set.addAll(tempList);
                         set.addAll(results);
@@ -284,7 +284,7 @@ public class Search {
         term = term.replace(")", ") ");
         term = term.replace("  ", " ");
         String[] words = term.split(" ");
-        return parse(words, parsedWords);
+        return tokenize(words, parsedWords);
     }
 
     public Map<String, Map<String,ArrayList<Integer>>> showDocument(String filename, ArrayList<String> searchWords) throws IOException {

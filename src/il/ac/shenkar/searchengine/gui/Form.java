@@ -35,27 +35,13 @@ public class Form extends JFrame {
     DefaultListModel<String> model;
     private ArrayList<String> searchTerms;
     private DefaultListModel listModel;
-
-
+    private CenteredFileChooser fileChooser;
 
     @SuppressWarnings({"unchecked", "BoundFieldAssignment"})
     public Form() {
         super("search engine");
-        this.setSize(1024, 720);
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        this.setLocationRelativeTo(null);
-
-        resultsScrollPanel.setBorder(BorderFactory.createEmptyBorder());
-
-        CenteredFileChooser fileChooser = new CenteredFileChooser();
-        fileChooser.setCurrentDirectory(new File("./input"));
-        fileChooser.setDialogTitle("Search Engine");
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.setMultiSelectionEnabled(true);
-
-        setContentPane(rootPanel);
-        setVisible(true);
-
+        initComponents();
+        Search search = new Search();
         searchTerms = new ArrayList<>();
 
         this.addWindowListener(new WindowAdapter() {
@@ -72,17 +58,12 @@ public class Form extends JFrame {
         });
 
         searchButton.addActionListener(e -> {
-            Search search = new Search();
             ArrayList<String> results = search.search(searchField.getText(), searchTerms);
-            searchResults.removeAll();
-            DefaultListModel listModel = new DefaultListModel();
-            results.forEach(listModel::addElement);
-            searchResults.setModel(listModel);
+            showResults(results);
         });
 
         searchResults.addListSelectionListener(e -> {
             if(!e.getValueIsAdjusting()) {
-                Search search = new Search();
                 Map<String, Map<String,ArrayList<Integer>>> doc = null;
                 try {
                     doc = search.showDocument(searchResults.getSelectedValue().toString(), searchTerms);
@@ -92,19 +73,11 @@ public class Form extends JFrame {
                 if (doc != null) {
                     doc.forEach((text, wordData) -> {
                         showDocument.setText(text);
-                        Highlighter highlighter = showDocument.getHighlighter();
-                        Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.pink);
-                        wordData.forEach((word, loc) -> loc.forEach((num)->{
-                            try {
-                                highlighter.addHighlight(num, num + word.length(), painter );
-                            } catch (BadLocationException e1) {
-                                e1.printStackTrace();
-                            }
-                        }));
-                        docScrollPanel.setBorder(BorderFactory.createEmptyBorder());
-                        docPanel.setVisible(true);
-                        this.setContentPane(docPanel);
+                        highlight(wordData);
                     });
+                    docScrollPanel.setBorder(BorderFactory.createEmptyBorder());
+                    docPanel.setVisible(true);
+                    this.setContentPane(docPanel);
                 }
                 searchTerms.clear();
             }
@@ -146,6 +119,42 @@ public class Form extends JFrame {
 //            }
 //        });
 
+    }
+
+    private void initComponents() {
+        this.setSize(1024, 720);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setLocationRelativeTo(null);
+
+        resultsScrollPanel.setBorder(BorderFactory.createEmptyBorder());
+
+        fileChooser = new CenteredFileChooser();
+        fileChooser.setCurrentDirectory(new File("./input"));
+        fileChooser.setDialogTitle("Search Engine");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setMultiSelectionEnabled(true);
+
+        setContentPane(rootPanel);
+        setVisible(true);
+    }
+
+    private void showResults(ArrayList<String> results) {
+        searchResults.removeAll();
+        DefaultListModel listModel = new DefaultListModel();
+        results.forEach(listModel::addElement);
+        searchResults.setModel(listModel);
+    }
+
+    private void highlight(Map<String,ArrayList<Integer>> wordData) {
+        Highlighter highlighter = showDocument.getHighlighter();
+        Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.pink);
+        wordData.forEach((word, loc) -> loc.forEach((num)->{
+            try {
+                highlighter.addHighlight(num, num + word.length(), painter );
+            } catch (BadLocationException e1) {
+                e1.printStackTrace();
+            }
+        }));
     }
 
 }
