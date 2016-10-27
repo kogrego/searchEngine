@@ -22,25 +22,18 @@ public class Indexer {
         goodWords.forEach((word)-> {
             if(indexMap.containsKey(word)) {
                 Map<String, Hits> hits = indexMap.get(word);
-                if(indexMap.get(word).containsKey(toAdd.getName())) {
-                    Hits hit = hits.get(toAdd.getName());
-                    hit.setNumOfHits(hit.getNumOfHits() + 1);
-                    hits.put(toAdd.getName(), hit);
+                if(hits.containsKey(toAdd.getName())) {
+                    addOccurence(toAdd, hits);
                 }
                 else {
-                    Hits hit = new Hits(1, true);
-                    hits.put(toAdd.getName(), hit);
+                    addHit(toAdd, hits);
                 }
                 indexMap.put(word, hits);
             }
             else {
-                Map<String, Hits> firstHit = new HashMap<>();
-                Hits hit = new Hits(1, true);
-                firstHit.put(toAdd.getName(), hit);
-                indexMap.put(word, firstHit);
+                indexWord(toAdd, word);
             }
         });
-        System.out.println("done");
     }
 
     public void hide(String fileName){
@@ -67,5 +60,27 @@ public class Indexer {
                 data.put(fileName, hit);
             }
         });
+    }
+
+    //Todo: should be a method of hits
+
+    public void addOccurence(File toAdd, Map<String, Hits> hits) {
+        Hits hit = hits.get(toAdd.getName());
+        hit.setNumOfHits(hit.getNumOfHits() + 1);
+        hits.put(toAdd.getName(), hit);
+    }
+
+    //Todo: should be a method of hits
+
+    public void addHit(File toAdd, Map<String, Hits> hits) {
+        Hits hit = new Hits(1, true);
+        hits.put(toAdd.getName(), hit);
+    }
+
+    private void indexWord(File toAdd, String word) {
+        Map<String, Hits> firstHit = new HashMap<>();
+        Hits hit = new Hits(1, true);
+        firstHit.put(toAdd.getName(), hit);
+        indexMap.put(word, firstHit);
     }
 }
