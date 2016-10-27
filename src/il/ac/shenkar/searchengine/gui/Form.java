@@ -1,9 +1,5 @@
 package il.ac.shenkar.searchengine.gui;
 
-import il.ac.shenkar.searchengine.engine.Search;
-import il.ac.shenkar.searchengine.storage.Indexer;
-import il.ac.shenkar.searchengine.utils.Utils;
-
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
@@ -13,6 +9,9 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
+import il.ac.shenkar.searchengine.engine.Search;
+import il.ac.shenkar.searchengine.storage.Indexer;
+import il.ac.shenkar.searchengine.utils.Utils;
 
 public class Form extends JFrame {
     private JPanel rootPanel;
@@ -32,8 +31,11 @@ public class Form extends JFrame {
     private JScrollPane docScrollPanel;
     private JScrollPane resultsScrollPanel;
     private JPanel toolBar;
+    private JTabbedPane tabbedPane;
     DefaultListModel<String> model;
     private ArrayList<String> searchTerms;
+    private DefaultListModel listModel;
+
 
 
     @SuppressWarnings({"unchecked", "BoundFieldAssignment"})
@@ -52,6 +54,7 @@ public class Form extends JFrame {
         fileChooser.setMultiSelectionEnabled(true);
 
         setContentPane(rootPanel);
+        setVisible(true);
 
         searchTerms = new ArrayList<>();
 
@@ -101,19 +104,15 @@ public class Form extends JFrame {
                         docScrollPanel.setBorder(BorderFactory.createEmptyBorder());
                         docPanel.setVisible(true);
                         this.setContentPane(docPanel);
-                        this.invalidate();
-                        this.validate();
                     });
                 }
                 searchTerms.clear();
-                System.out.print("done");
             }
         });
 
         backButton.addActionListener(e -> {
             this.setContentPane(rootPanel);
-            this.invalidate();
-            this.validate();
+            docPanel.setVisible(false);
         });
 
         loadButton.addActionListener(e -> {
@@ -147,9 +146,6 @@ public class Form extends JFrame {
 //            }
 //        });
 
-
-
-        setVisible(true);
     }
 
 }

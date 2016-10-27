@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -13,18 +14,26 @@ public class Utils {
     private static final String[] blackList = {"on", "in", "to", "a", "an", "the", "i", "is", "it", "as",
                                                 "was", "so", "his", "has", ""};
     private static File index;
+    private static File fileNames;
     private static Map<String, Map<String, Hits>> map;
     private static final String INDEX = "./index.txt";
+    private static ArrayList<String> storageFileNames;
+    private static final String FILE_NAMES = "./storage.txt";
 
     public static String[] getBlackList() {
         return blackList;
     }
 
-    public static File getIndex() {
+    public static void getIndex() {
         if(index == null){
             index = new File(INDEX);
         }
-        return index;
+    }
+
+    public static void getStoredFilesList() {
+        if(fileNames == null){
+            fileNames = new File(FILE_NAMES);
+        }
     }
 
     public static Map<String, Map<String, Hits>> getMap() {
@@ -34,9 +43,21 @@ public class Utils {
         return map;
     }
 
+    public static ArrayList<String> getStorageFileNames(){
+        if(storageFileNames == null){
+            storageFileNames = new ArrayList<>();
+        }
+        return storageFileNames;
+    }
+
     public static File storeFile(File src) throws IOException {
         String serial = String.valueOf(System.currentTimeMillis());
-        File dest = new File("./storage/" + src.getName() + serial + ".txt");
+        String newFileName = src.getName() + serial + ".txt";
+        if(storageFileNames == null){
+            storageFileNames = new ArrayList<>();
+        }
+        storageFileNames.add(newFileName);
+        File dest = new File("./storage/" + newFileName);
         InputStream is = new FileInputStream(src);
         OutputStream os = new FileOutputStream(dest);
         String head = "# MetaData \n# Serial: " + serial + "\n";
@@ -53,17 +74,30 @@ public class Utils {
 
     public static void saveMapToFile() throws IOException {
         Gson gson = new Gson();
-        String json = gson.toJson(map);
-        BufferedWriter out = new BufferedWriter(new FileWriter(INDEX));
-        out.write(json);
-        out.close();
+        String mapString = gson.toJson(map);
+        BufferedWriter indexOut = new BufferedWriter(new FileWriter(INDEX));
+        indexOut.write(mapString);
+        indexOut.close();
+        String fileNames = gson.toJson(storageFileNames);
+        BufferedWriter namesOut = new BufferedWriter(new FileWriter(FILE_NAMES));
+        namesOut.write(fileNames);
+        namesOut.close();
     }
 
     public static void getMapFromFile() throws IOException, ClassNotFoundException {
+        String mapJson;
         Gson gson = new Gson();
-        String json = new Scanner(new File(INDEX)).useDelimiter("\\Z").next();
-        Type type = new TypeToken<Map<String, Map<String, Hits>>>(){}.getType();
-        map = gson.fromJson(json, type);
+        if(index.exists()) {
+            mapJson = new Scanner(index).useDelimiter("\\Z").next();
+        }
+        else {
+            mapJson = new Scanner(new File(INDEX)).useDelimiter("\\Z").next();
+        }
+        Type mapType = new TypeToken<Map<String, Map<String, Hits>>>(){}.getType();
+        map = gson.fromJson(mapJson, mapType);
+        String namesJson = new Scanner(new File(FILE_NAMES)).useDelimiter("\\Z").next();
+        Type listType = new TypeToken<ArrayList<String>>(){}.getType();
+        storageFileNames = gson.fromJson(namesJson, listType);
     }
 
 }

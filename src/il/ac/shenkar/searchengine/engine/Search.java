@@ -5,13 +5,12 @@ import il.ac.shenkar.searchengine.utils.Utils;
 
 import java.io.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Search {
 
     private Map<String, Map<String, Hits>> indexMap;
+    private ArrayList<String> storageFileNames;
 
     public Search() {
         this.indexMap = Utils.getMap();
@@ -37,7 +36,7 @@ public class Search {
                         }
                         newWords.add(words[i + 1].replaceAll("[()]", ""));
                         results.removeAll(parse(newWords.toArray(new String[newWords.size()]), parsedWords));
-                        i++;
+                        i+=2;
                     } else if (words[i + 1].startsWith("\"")) {
                         String temp = "";
                         while (!words[i + 1].endsWith("\"")) {
@@ -90,7 +89,7 @@ public class Search {
                         list.addAll(tempList.stream().filter(tempList::contains).collect(Collectors.toList()));
                         results.clear();
                         results.addAll(list);
-                        i++;
+                        i+=2;
                     } else if (words[i + 1].startsWith("\"")) {
                         String temp = "";
                         while (!words[i + 1].endsWith("\"")) {
@@ -156,7 +155,7 @@ public class Search {
                         set.addAll(results);
                         results.clear();
                         results.addAll(set);
-                        i++;
+                        i+=2;
                     } else if (words[i + 1].startsWith("\"")) {
                         String temp = "";
                         while (!words[i + 1].endsWith("\"")) {
@@ -211,6 +210,8 @@ public class Search {
                             });
                             results.clear();
                             results.addAll(set);
+                        } else {
+                            results.addAll(Utils.getStorageFileNames());
                         }
                         i += 2;
                     }
@@ -230,7 +231,7 @@ public class Search {
                         set.addAll(results);
                         results.clear();
                         results.addAll(set);
-                        i++;
+                        i+=2;
                     } else if (words[i].startsWith("\"")) {
                         String temp = "";
                         while (!words[i].endsWith("\"")) {
@@ -280,7 +281,7 @@ public class Search {
 
     public ArrayList<String> search(String term, ArrayList<String> parsedWords) {
         term = term.replace("(", " (");
-        term = term.replace(")", " )");
+        term = term.replace(")", ") ");
         term = term.replace("  ", " ");
         String[] words = term.split(" ");
         return parse(words, parsedWords);
@@ -299,6 +300,7 @@ public class Search {
             }
         }
         String lowerDoc = doc.toLowerCase();
+        lowerDoc = lowerDoc.replaceAll("[\\-+\\^:,;?!.()/]", " ");
         br.close();
         Map<String, ArrayList<Integer>> wordData = new HashMap<>();
         for(String word: searchWords){
@@ -307,7 +309,13 @@ public class Search {
             while (lastIndex != -1) {
                 lastIndex = lowerDoc.indexOf(word, lastIndex);
                 if (lastIndex != -1) {
-                    wordLoc.add(lastIndex);
+                    String sub = lowerDoc.substring(lastIndex);
+                    String[] parsedSub = sub.split(" ");
+                    if(parsedSub[0].equals(word)) {
+                        if (lastIndex == 0 || lowerDoc.charAt(lastIndex - 1) == ' ' || lowerDoc.charAt(lastIndex - 1) == '\n') {
+                            wordLoc.add(lastIndex);
+                        }
+                    }
                     lastIndex += word.length();
                 }
             }
