@@ -1,4 +1,4 @@
-package il.ac.shenkar.searchengine.storage;
+package il.ac.shenkar.searchengine.admin;
 
 import il.ac.shenkar.searchengine.utils.Hits;
 import il.ac.shenkar.searchengine.utils.Utils;

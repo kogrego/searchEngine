@@ -1,4 +1,4 @@
-package il.ac.shenkar.searchengine.gui;
+package il.ac.shenkar.searchengine.admin;
 
 import javax.swing.*;
 import java.awt.*;

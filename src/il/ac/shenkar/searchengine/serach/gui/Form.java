@@ -1,4 +1,4 @@
-package il.ac.shenkar.searchengine.gui;
+package il.ac.shenkar.searchengine.serach.gui;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -9,20 +9,17 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
-import il.ac.shenkar.searchengine.engine.Search;
-import il.ac.shenkar.searchengine.storage.Indexer;
+
+import il.ac.shenkar.searchengine.serach.engine.Search;
 import il.ac.shenkar.searchengine.utils.Utils;
 
 public class Form extends JFrame {
     private JPanel rootPanel;
     private JTextField searchField;
     private JButton searchButton;
-    private JButton loadButton;
     private JPanel searchPanel;
     private JLabel searchLabel;
     private JLabel appName;
-    private JPanel loadPanel;
-    private JLabel selectedFilesLabel;
     private JList searchResults;
     private JTextArea showDocument;
     private JPanel docPanel;
@@ -36,7 +33,6 @@ public class Form extends JFrame {
     DefaultListModel<String> model;
     private ArrayList<String> searchTerms;
     private DefaultListModel listModel;
-    private CenteredFileChooser fileChooser;
 
     @SuppressWarnings({"unchecked", "BoundFieldAssignment"})
     public Form() {
@@ -62,17 +58,16 @@ public class Form extends JFrame {
             searchTerms.clear();
             ArrayList<String> results = search.search(searchField.getText(), searchTerms);
             searchResults.removeAll();
-            if(results.isEmpty()) {
+            if (results.isEmpty()) {
                 noResults();
-            }
-            else {
+            } else {
                 showResults(results);
             }
         });
 
         searchResults.addListSelectionListener(e -> {
-            if(!e.getValueIsAdjusting()) {
-                Map<String, Map<String,ArrayList<Integer>>> doc = null;
+            if (!e.getValueIsAdjusting()) {
+                Map<String, Map<String, ArrayList<Integer>>> doc = null;
                 try {
                     doc = search.showDocument(searchResults.getSelectedValue().toString(), searchTerms);
                 } catch (IOException e1) {
@@ -93,25 +88,6 @@ public class Form extends JFrame {
         backButton.addActionListener(e -> {
             this.setContentPane(rootPanel);
             docPanel.setVisible(false);
-        });
-
-        loadButton.addActionListener(e -> {
-            fileChooser.showOpenDialog(loadButton);
-            File[] files = fileChooser.getSelectedFiles();
-            String paths = "loaded files:";
-            Indexer indexer = new Indexer();
-            for (File file : files) {
-                try {
-                    File storedFile = Utils.storeFile(file);
-                    indexer.index(storedFile);
-                    Utils.saveMapToFile();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                String path = file.getPath();
-                paths += path + " ";
-            }
-            selectedFilesLabel.setText(paths);
         });
 
 //        hideFilesSButton.addActionListener(new ActionListener() {
@@ -135,12 +111,6 @@ public class Form extends JFrame {
 
         resultsScrollPanel.setBorder(BorderFactory.createEmptyBorder());
 
-        fileChooser = new CenteredFileChooser();
-        fileChooser.setCurrentDirectory(new File("./input"));
-        fileChooser.setDialogTitle("Search Engine");
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.setMultiSelectionEnabled(true);
-
         setContentPane(rootPanel);
         setVisible(true);
     }
@@ -157,12 +127,12 @@ public class Form extends JFrame {
         resultsLabel.setText("no results");
     }
 
-    private void highlight(Map<String,ArrayList<Integer>> wordData) {
+    private void highlight(Map<String, ArrayList<Integer>> wordData) {
         Highlighter highlighter = showDocument.getHighlighter();
         Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.pink);
-        wordData.forEach((word, loc) -> loc.forEach((num)->{
+        wordData.forEach((word, loc) -> loc.forEach((num) -> {
             try {
-                highlighter.addHighlight(num, num + word.length(), painter );
+                highlighter.addHighlight(num, num + word.length(), painter);
             } catch (BadLocationException e1) {
                 e1.printStackTrace();
             }

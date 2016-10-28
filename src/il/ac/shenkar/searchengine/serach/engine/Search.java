@@ -1,4 +1,4 @@
-package il.ac.shenkar.searchengine.engine;
+package il.ac.shenkar.searchengine.serach.engine;
 
 import il.ac.shenkar.searchengine.utils.Hits;
 import il.ac.shenkar.searchengine.utils.Utils;

@@ -1,9 +1,7 @@
-package il.ac.shenkar.searchengine;
-
-import il.ac.shenkar.searchengine.gui.Form;
-import il.ac.shenkar.searchengine.utils.Utils;
+package il.ac.shenkar.searchengine.admin;
 
 import java.io.IOException;
+import il.ac.shenkar.searchengine.utils.Utils;
 
 public class Main {
     public static void main(String[] args) {
@@ -14,6 +12,6 @@ public class Main {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        new Form();
+        new Admin();
     }
 }
