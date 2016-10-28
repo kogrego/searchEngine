@@ -11,8 +11,9 @@ public class Admin extends JFrame{
     private JPanel rootPanel;
     private JButton loadButton;
     private JLabel title;
-    private JList fileList;
-    private JScrollPane filesScrollPane;
+    private JButton deleteButton;
+    private JPanel actionPanel;
+    private JPanel wrapperPanel;
     private JLabel selectedFilesLabel;
     private CenteredFileChooser fileChooser;
 
@@ -57,9 +58,12 @@ public class Admin extends JFrame{
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setLocationRelativeTo(null);
 
+        loadButton.setBorderPainted(false);
+        deleteButton.setBorderPainted(false);
+
         fileChooser = new CenteredFileChooser();
         fileChooser.setCurrentDirectory(new File("./input"));
-        fileChooser.setDialogTitle("Search Engine");
+        fileChooser.setDialogTitle("Search Engine - Admin");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setMultiSelectionEnabled(true);
 
