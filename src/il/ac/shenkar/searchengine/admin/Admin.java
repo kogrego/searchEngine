@@ -33,10 +33,11 @@ public class Admin extends JFrame{
                 System.exit(0);
             }
         });
+
         loadButton.addActionListener(e -> {
             fileChooser.showOpenDialog(loadButton);
             File[] files = fileChooser.getSelectedFiles();
-            String paths = "loaded files:";
+            String paths = "Successfully stored:\n\n";
             Indexer indexer = new Indexer();
             for (File file : files) {
                 try {
@@ -47,7 +48,7 @@ public class Admin extends JFrame{
                     e1.printStackTrace();
                 }
                 String path = file.getPath();
-                paths += path + " ";
+                paths += path + "\n";
             }
             resultLabel.setText(paths);
         });
@@ -55,7 +56,6 @@ public class Admin extends JFrame{
 
     private void initComponents() {
         this.setSize(1024, 720);
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setLocationRelativeTo(null);
 
         loadButton.setBorderPainted(false);
