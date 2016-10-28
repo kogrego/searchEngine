@@ -14,7 +14,7 @@ public class Admin extends JFrame{
     private JButton deleteButton;
     private JPanel actionPanel;
     private JPanel wrapperPanel;
-    private JLabel selectedFilesLabel;
+    private JTextArea resultLabel;
     private CenteredFileChooser fileChooser;
 
     public Admin() {
@@ -49,7 +49,7 @@ public class Admin extends JFrame{
                 String path = file.getPath();
                 paths += path + " ";
             }
-            selectedFilesLabel.setText(paths);
+            resultLabel.setText(paths);
         });
     }
 
