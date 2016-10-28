@@ -31,6 +31,7 @@ public class Form extends JFrame {
     private JScrollPane docScrollPanel;
     private JScrollPane resultsScrollPanel;
     private JPanel toolBar;
+    private JLabel resultsLabel;
     private JTabbedPane tabbedPane;
     DefaultListModel<String> model;
     private ArrayList<String> searchTerms;
@@ -58,8 +59,15 @@ public class Form extends JFrame {
         });
 
         searchButton.addActionListener(e -> {
+            searchTerms.clear();
             ArrayList<String> results = search.search(searchField.getText(), searchTerms);
-            showResults(results);
+            searchResults.removeAll();
+            if(results.isEmpty()) {
+                noResults();
+            }
+            else {
+                showResults(results);
+            }
         });
 
         searchResults.addListSelectionListener(e -> {
@@ -79,7 +87,6 @@ public class Form extends JFrame {
                     docPanel.setVisible(true);
                     this.setContentPane(docPanel);
                 }
-                searchTerms.clear();
             }
         });
 
@@ -139,10 +146,15 @@ public class Form extends JFrame {
     }
 
     private void showResults(ArrayList<String> results) {
-        searchResults.removeAll();
+        resultsLabel.setText("Search Results:\n");
         DefaultListModel listModel = new DefaultListModel();
         results.forEach(listModel::addElement);
         searchResults.setModel(listModel);
+    }
+
+    private void noResults() {
+        searchResults.setModel(new DefaultListModel());
+        resultsLabel.setText("no results");
     }
 
     private void highlight(Map<String,ArrayList<Integer>> wordData) {
