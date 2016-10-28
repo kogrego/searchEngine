@@ -37,20 +37,25 @@ public class Admin extends JFrame{
         loadButton.addActionListener(e -> {
             fileChooser.showOpenDialog(loadButton);
             File[] files = fileChooser.getSelectedFiles();
-            String successMsg = "Successfully stored:\n\n";
+            String msg = "";
             Indexer indexer = new Indexer();
             for (File file : files) {
-                try {
-                    File storedFile = Utils.storeFile(file);
-                    indexer.index(storedFile);
-                    Utils.saveMapToFile();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                if(Utils.getStorageFileNames().containsKey(file.getName())) {
+                    msg += file.getName() + " already exists\n";
                 }
-                String fileName = file.getName();
-                successMsg += fileName + "\n";
+                else {
+                    try {
+                        File storedFile = Utils.storeFile(file);
+                        indexer.index(storedFile);
+                        Utils.saveMapToFile();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    String fileName = file.getName();
+                    msg += fileName + "  was loaded successfully\n";
+                }
             }
-            resultLabel.setText(successMsg);
+            resultLabel.setText(msg);
         });
     }
 
