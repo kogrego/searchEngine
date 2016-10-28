@@ -10,10 +10,11 @@ import java.util.stream.Collectors;
 public class Search {
 
     private Map<String, Map<String, Hits>> indexMap;
-    private ArrayList<String> storageFileNames;
+    private Map<String, String> storageFileNames;
 
     public Search() {
         this.indexMap = Utils.getMap();
+        this.storageFileNames = Utils.getStorageFileNames();
     }
 
     private ArrayList<String> tokenize(String[] words, ArrayList<String> parsedWords) throws IllegalStateException {
@@ -211,7 +212,7 @@ public class Search {
                             results.clear();
                             results.addAll(set);
                         } else {
-                            results.addAll(Utils.getStorageFileNames());
+                            results.addAll(new ArrayList<>(Utils.getStorageFileNames().values()));
                         }
                         i += 2;
                     }

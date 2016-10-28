@@ -18,6 +18,7 @@ public class Utils {
     private static Map<String, Map<String, Hits>> map;
     private static final String INDEX = "./index.txt";
     private static ArrayList<String> storageFileNames;
+    private static Map<String, String> fileIndex;
     private static final String STORAGE_FILE_NAME = "./storage.txt";
 
     public static String[] getBlackList() {
@@ -36,6 +37,13 @@ public class Utils {
         }
     }
 
+
+//    public static void getStoredFilesList() {
+//        if(storageFile == null){
+//            storageFile = new File(STORAGE_FILE_NAME);
+//        }
+//    }
+
     public static Map<String, Map<String, Hits>> getMap() {
         if(map == null){
             map = new HashMap<>();
@@ -43,21 +51,27 @@ public class Utils {
         return map;
     }
 
-    public static ArrayList<String> getStorageFileNames(){
-        if(storageFileNames == null){
-            storageFileNames = new ArrayList<>();
+    public static Map<String, String> getStorageFileNames(){
+        if(fileIndex == null){
+            fileIndex = new HashMap<>();
         }
-        return storageFileNames;
+        return fileIndex;
     }
+
+//    public static ArrayList<String> getStorageFileNames(){
+//        if(storageFileNames == null){
+//            storageFileNames = new ArrayList<>();
+//        }
+//        return storageFileNames;
+//    }
 
     public static File storeFile(File src) throws IOException {
         String serial = String.valueOf(System.currentTimeMillis());
-        String newFileName =  serial + ".txt";
-        if(storageFileNames == null){
-            storageFileNames = new ArrayList<>();
+        if(fileIndex == null){
+            fileIndex = new HashMap<>();
         }
-        storageFileNames.add(src.getName());
-        File dest = new File("./storage/" + newFileName);
+        fileIndex.put(src.getName(), serial);
+        File dest = new File("./storage/" + serial + ".txt");
         InputStream is = new FileInputStream(src);
         OutputStream os = new FileOutputStream(dest);
         String head = "# MetaData \n# original file name: " + src.getName() + "\n" ;
@@ -78,7 +92,7 @@ public class Utils {
         BufferedWriter indexOut = new BufferedWriter(new FileWriter(INDEX));
         indexOut.write(mapString);
         indexOut.close();
-        String fileNames = gson.toJson(storageFileNames);
+        String fileNames = gson.toJson(fileIndex);
         BufferedWriter namesOut = new BufferedWriter(new FileWriter(STORAGE_FILE_NAME));
         namesOut.write(fileNames);
         namesOut.close();
@@ -96,8 +110,8 @@ public class Utils {
         Type mapType = new TypeToken<Map<String, Map<String, Hits>>>(){}.getType();
         map = gson.fromJson(mapJson, mapType);
         String namesJson = new Scanner(new File(STORAGE_FILE_NAME)).useDelimiter("\\Z").next();
-        Type listType = new TypeToken<ArrayList<String>>(){}.getType();
-        storageFileNames = gson.fromJson(namesJson, listType);
+        Type listType = new TypeToken<Map<String, String>>(){}.getType();
+        fileIndex = gson.fromJson(namesJson, listType);
     }
 
 }

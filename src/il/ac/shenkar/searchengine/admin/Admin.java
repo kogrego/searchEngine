@@ -1,11 +1,11 @@
 package il.ac.shenkar.searchengine.admin;
-import il.ac.shenkar.searchengine.utils.Utils;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import il.ac.shenkar.searchengine.utils.Utils;
 
 public class Admin extends JFrame{
     private JPanel rootPanel;
@@ -37,7 +37,7 @@ public class Admin extends JFrame{
         loadButton.addActionListener(e -> {
             fileChooser.showOpenDialog(loadButton);
             File[] files = fileChooser.getSelectedFiles();
-            String paths = "Successfully stored:\n\n";
+            String successMsg = "Successfully stored:\n\n";
             Indexer indexer = new Indexer();
             for (File file : files) {
                 try {
@@ -47,10 +47,10 @@ public class Admin extends JFrame{
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-                String path = file.getPath();
-                paths += path + "\n";
+                String fileName = file.getName();
+                successMsg += fileName + "\n";
             }
-            resultLabel.setText(paths);
+            resultLabel.setText(successMsg);
         });
     }
 

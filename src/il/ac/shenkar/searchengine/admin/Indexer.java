@@ -9,29 +9,32 @@ import java.util.*;
 public class Indexer {
 
     private Map<String, Map<String, Hits>> indexMap;
+    private Map<String, String> fileIndexMap;
     private Parser parser;
 
     public Indexer(){
         indexMap = Utils.getMap();
+        fileIndexMap = Utils.getStorageFileNames();
         parser = new Parser();
     }
 
     public void index(File toAdd) throws IOException {
+        String fileId = toAdd.getName().substring(0, toAdd.getName().lastIndexOf('.'));
         ArrayList<String> wordsFound = parser.parse(toAdd);
         ArrayList<String> goodWords = parser.blackList(wordsFound);
         goodWords.forEach((word)-> {
             if(indexMap.containsKey(word)) {
                 Map<String, Hits> hits = indexMap.get(word);
-                if(hits.containsKey(toAdd.getName())) {
-                    addOccurence(toAdd, hits);
+                if(hits.containsKey(fileId)) {
+                    addOccurrence(fileId, hits);
                 }
                 else {
-                    addHit(toAdd, hits);
+                    addHit(fileId, hits);
                 }
                 indexMap.put(word, hits);
             }
             else {
-                indexWord(toAdd, word);
+                indexWord(fileId, word);
             }
         });
     }
@@ -64,23 +67,23 @@ public class Indexer {
 
     //Todo: should be a method of hits
 
-    public void addOccurence(File toAdd, Map<String, Hits> hits) {
-        Hits hit = hits.get(toAdd.getName());
+    public void addOccurrence(String fileId, Map<String, Hits> hits) {
+        Hits hit = hits.get(fileId);
         hit.setNumOfHits(hit.getNumOfHits() + 1);
-        hits.put(toAdd.getName(), hit);
+        hits.put(fileId, hit);
     }
 
     //Todo: should be a method of hits
 
-    public void addHit(File toAdd, Map<String, Hits> hits) {
+    public void addHit(String fileId, Map<String, Hits> hits) {
         Hits hit = new Hits(1, true);
-        hits.put(toAdd.getName(), hit);
+        hits.put(fileId, hit);
     }
 
-    private void indexWord(File toAdd, String word) {
+    private void indexWord(String fileId, String word) {
         Map<String, Hits> firstHit = new HashMap<>();
         Hits hit = new Hits(1, true);
-        firstHit.put(toAdd.getName(), hit);
+        firstHit.put(fileId, hit);
         indexMap.put(word, firstHit);
     }
 }
