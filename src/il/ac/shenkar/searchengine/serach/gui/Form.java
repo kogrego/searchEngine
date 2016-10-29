@@ -64,7 +64,7 @@ public class Form extends JFrame {
             if (!e.getValueIsAdjusting()) {
                 Map<String, Map<String, ArrayList<Integer>>> doc = null;
                 try {
-                    doc = search.showDocument(searchResults.getSelectedValue().toString(), searchTerms); //Todo:: change fileName to serial
+                    doc = search.showDocument(searchResults.getSelectedValue().toString(), searchTerms);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }

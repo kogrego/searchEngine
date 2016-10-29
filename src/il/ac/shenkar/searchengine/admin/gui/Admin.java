@@ -6,8 +6,8 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
-import il.ac.shenkar.searchengine.admin.CenteredFileChooser;
 import il.ac.shenkar.searchengine.admin.Indexer;
+import il.ac.shenkar.searchengine.utils.Doc;
 import il.ac.shenkar.searchengine.utils.Utils;
 
 public class Admin extends JFrame{
@@ -53,7 +53,8 @@ public class Admin extends JFrame{
                 else {
                     try {
                         File storedFile = Utils.storeFile(file);
-                        indexer.index(storedFile);
+                        Doc doc = new Doc(storedFile.getName());
+                        indexer.index(storedFile, doc);
                         Utils.saveMapToFile();
                     } catch (IOException e1) {
                         e1.printStackTrace();

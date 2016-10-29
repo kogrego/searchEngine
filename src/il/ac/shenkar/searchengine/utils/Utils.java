@@ -66,7 +66,7 @@ public class Utils {
             postingMap = new HashMap<>();
         }
         postingMap.put(doc.getSerial(), doc);
-        File dest = new File("./storage/" + doc.getSerial() + ".txt");
+        File dest = new File("./storage/" + doc.getFileName());
         InputStream is = new FileInputStream(src);
         OutputStream os = new FileOutputStream(dest);
         String head = "# MetaData \n# original file name: " + src.getName() + "\n";

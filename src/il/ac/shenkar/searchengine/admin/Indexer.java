@@ -17,23 +17,22 @@ public class Indexer {
         parser = new Parser();
     }
 
-    public void index(File toAdd) throws IOException {
-        String fileId = toAdd.getName().substring(0, toAdd.getName().lastIndexOf('.'));
+    public void index(File toAdd, Doc doc) throws IOException {
         ArrayList<String> wordsFound = parser.parse(toAdd);
         ArrayList<String> goodWords = parser.blackList(wordsFound);
         goodWords.forEach((word)-> {
             if(indexMap.containsKey(word)) {
                 Map<String, ArrayList> hit = indexMap.get(word);
-                if(hit.containsKey(fileId)) {
-                    addOccurrence(fileId, hit);
+                if(hit.containsKey(doc.getSerial())) {
+                    addOccurrence(doc.getSerial(), hit);
                 }
                 else {
-                    addHit(fileId, hit);
+                    addHit(doc.getSerial(), hit);
                 }
                 indexMap.put(word, hit);
             }
             else {
-                indexWord(fileId, word);
+                indexWord(doc.getSerial(), word);
             }
         });
     }

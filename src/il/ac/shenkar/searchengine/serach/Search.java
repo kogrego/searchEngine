@@ -372,7 +372,7 @@ public class Search {
         Map<String, Map<String,ArrayList<Integer>>> returnDoc = new HashMap<>();
         String sCurrentLine;
         String doc = "";
-        filename = "./storage/" + filename + ".txt";
+        filename = "./storage/" + filename;
         BufferedReader br = new BufferedReader(new FileReader(filename));
         while ((sCurrentLine = br.readLine()) != null) {
             if(!sCurrentLine.startsWith("#")) {
