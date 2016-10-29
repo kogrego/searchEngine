@@ -10,7 +10,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 
-import il.ac.shenkar.searchengine.serach.engine.Search;
+import il.ac.shenkar.searchengine.serach.Search;
 import il.ac.shenkar.searchengine.utils.Utils;
 
 public class Form extends JFrame {
@@ -45,11 +45,6 @@ public class Form extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
-                try {
-                    Utils.saveMapToFile();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
                 System.exit(0);
             }
         });
@@ -69,7 +64,7 @@ public class Form extends JFrame {
             if (!e.getValueIsAdjusting()) {
                 Map<String, Map<String, ArrayList<Integer>>> doc = null;
                 try {
-                    doc = search.showDocument(searchResults.getSelectedValue().toString(), searchTerms);
+                    doc = search.showDocument(searchResults.getSelectedValue().toString(), searchTerms); //Todo:: change fileName to serial
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -118,7 +113,9 @@ public class Form extends JFrame {
     private void showResults(ArrayList<String> results) {
         resultsLabel.setText("Search Results:\n");
         DefaultListModel listModel = new DefaultListModel();
-        results.forEach(listModel::addElement);
+        results.forEach((result)-> {
+            listModel.addElement(Utils.getPostingMap().get(result).getFileName());
+        });
         searchResults.setModel(listModel);
     }
 

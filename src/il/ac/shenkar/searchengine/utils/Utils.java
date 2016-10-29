@@ -2,7 +2,6 @@ package il.ac.shenkar.searchengine.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -12,73 +11,69 @@ import java.util.Scanner;
 
 public class Utils {
     private static final String[] blackList = {"on", "in", "to", "a", "an", "the", "i", "is", "it", "as",
-                                                "was", "so", "his", "has", ""};
+            "was", "so", "his", "has", ""};
     private static File index;
-    private static File storageFile;
-    private static Map<String, Map<String, Hits>> map;
+    private static File posting;
+    private static Map<String, Map<String, ArrayList>> map;
+    private static Map<String, Doc> postingMap;
     private static final String INDEX = "./index.txt";
-    private static ArrayList<String> storageFileNames;
-    private static Map<String, String> fileIndex;
-    private static final String STORAGE_FILE_NAME = "./storage.txt";
+    private static final String POSTING = "./posting.txt";
 
     public static String[] getBlackList() {
         return blackList;
     }
 
     public static void getIndex() {
-        if(index == null){
+        if (index == null) {
             index = new File(INDEX);
         }
     }
 
-    public static void getStoredFilesList() {
-        if(storageFile == null){
-            storageFile = new File(STORAGE_FILE_NAME);
+    public static void getPosting() {
+        if (posting == null) {
+            posting = new File(POSTING);
         }
     }
 
-
-//    public static void getStoredFilesList() {
-//        if(storageFile == null){
-//            storageFile = new File(STORAGE_FILE_NAME);
-//        }
-//    }
-
-    public static Map<String, Map<String, Hits>> getMap() {
-        if(map == null){
+    public static Map<String, Map<String, ArrayList>> getMap() {
+        if (map == null) {
             map = new HashMap<>();
         }
         return map;
     }
 
-    public static Map<String, String> getStorageFileNames(){
-        if(fileIndex == null){
-            fileIndex = new HashMap<>();
+    public static Map<String, Doc> getPostingMap() {
+        if (postingMap == null) {
+            postingMap = new HashMap<>();
         }
-        return fileIndex;
+        return postingMap;
     }
 
-//    public static ArrayList<String> getStorageFileNames(){
-//        if(storageFileNames == null){
-//            storageFileNames = new ArrayList<>();
-//        }
-//        return storageFileNames;
-//    }
+
+    public static ArrayList<String> getStorageFileNames() {
+        ArrayList<String> fileNames = new ArrayList<>();
+        if (postingMap != null) {
+            postingMap.forEach((key, doc) -> {
+                fileNames.add(doc.getFileName());
+            });
+        }
+        return fileNames;
+    }
 
     public static File storeFile(File src) throws IOException {
-        String serial = String.valueOf(System.currentTimeMillis());
-        if(fileIndex == null){
-            fileIndex = new HashMap<>();
+        Doc doc = new Doc(src.getName());
+        if (postingMap == null) {
+            postingMap = new HashMap<>();
         }
-        fileIndex.put(src.getName(), serial);
-        File dest = new File("./storage/" + serial + ".txt");
+        postingMap.put(doc.getSerial(), doc);
+        File dest = new File("./storage/" + doc.getSerial() + ".txt");
         InputStream is = new FileInputStream(src);
         OutputStream os = new FileOutputStream(dest);
-        String head = "# MetaData \n# original file name: " + src.getName() + "\n" ;
+        String head = "# MetaData \n# original file name: " + src.getName() + "\n";
         os.write(head.getBytes());
         byte[] buffer = new byte[1024];
         int length;
-        while((length = is.read(buffer)) > 0) {
+        while ((length = is.read(buffer)) > 0) {
             os.write(buffer, 0, length);
         }
         is.close();
@@ -92,26 +87,40 @@ public class Utils {
         BufferedWriter indexOut = new BufferedWriter(new FileWriter(INDEX));
         indexOut.write(mapString);
         indexOut.close();
-        String fileNames = gson.toJson(fileIndex);
-        BufferedWriter namesOut = new BufferedWriter(new FileWriter(STORAGE_FILE_NAME));
-        namesOut.write(fileNames);
-        namesOut.close();
     }
 
     public static void getMapFromFile() throws IOException, ClassNotFoundException {
         String mapJson;
         Gson gson = new Gson();
-        if(index.exists()) {
+        if (index.exists()) {
             mapJson = new Scanner(index).useDelimiter("\\Z").next();
-        }
-        else {
+        } else {
             mapJson = new Scanner(new File(INDEX)).useDelimiter("\\Z").next();
         }
-        Type mapType = new TypeToken<Map<String, Map<String, Hits>>>(){}.getType();
+        Type mapType = new TypeToken<Map<String, Map<String, ArrayList>>>() {
+        }.getType();
         map = gson.fromJson(mapJson, mapType);
-        String namesJson = new Scanner(new File(STORAGE_FILE_NAME)).useDelimiter("\\Z").next();
-        Type listType = new TypeToken<Map<String, String>>(){}.getType();
-        fileIndex = gson.fromJson(namesJson, listType);
+    }
+
+    public static void savePostingToFile() throws IOException {
+        Gson gson = new Gson();
+        String mapString = gson.toJson(postingMap);
+        BufferedWriter indexOut = new BufferedWriter(new FileWriter(POSTING));
+        indexOut.write(mapString);
+        indexOut.close();
+    }
+
+    public static void getPostingFromFile() throws IOException, ClassNotFoundException {
+        String mapJson;
+        Gson gson = new Gson();
+        if (posting.exists()) {
+            mapJson = new Scanner(posting).useDelimiter("\\Z").next();
+        } else {
+            mapJson = new Scanner(new File(POSTING)).useDelimiter("\\Z").next();
+        }
+        Type mapType = new TypeToken<Map<String, Doc>>() {
+        }.getType();
+        postingMap = gson.fromJson(mapJson, mapType);
     }
 
 }

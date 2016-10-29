@@ -1,20 +1,19 @@
 package il.ac.shenkar.searchengine.admin;
 
-import il.ac.shenkar.searchengine.utils.Hits;
+import il.ac.shenkar.searchengine.utils.Doc;
 import il.ac.shenkar.searchengine.utils.Utils;
-
 import java.io.*;
 import java.util.*;
 
 public class Indexer {
 
-    private Map<String, Map<String, Hits>> indexMap;
-    private Map<String, String> fileIndexMap;
+    private Map<String, Map<String, ArrayList>> indexMap;
+    private Map<String, Doc> postingMap;
     private Parser parser;
 
     public Indexer(){
         indexMap = Utils.getMap();
-        fileIndexMap = Utils.getStorageFileNames();
+        postingMap = Utils.getPostingMap();
         parser = new Parser();
     }
 
@@ -24,14 +23,14 @@ public class Indexer {
         ArrayList<String> goodWords = parser.blackList(wordsFound);
         goodWords.forEach((word)-> {
             if(indexMap.containsKey(word)) {
-                Map<String, Hits> hits = indexMap.get(word);
-                if(hits.containsKey(fileId)) {
-                    addOccurrence(fileId, hits);
+                Map<String, ArrayList> hit = indexMap.get(word);
+                if(hit.containsKey(fileId)) {
+                    addOccurrence(fileId, hit);
                 }
                 else {
-                    addHit(fileId, hits);
+                    addHit(fileId, hit);
                 }
-                indexMap.put(word, hits);
+                indexMap.put(word, hit);
             }
             else {
                 indexWord(fileId, word);
@@ -39,51 +38,50 @@ public class Indexer {
         });
     }
 
-    public void hide(String fileName){
-        if (indexMap == null){
-            throw new IllegalStateException("index is empty");
-        }
-        indexMap.forEach((word, data) -> {
-            Hits hit = data.get(fileName);
-            if(hit != null){
-                hit.setValid(false);
-                data.put(fileName, hit);
-            }
-        });
+//    public void hide(String fileName){
+//        if (indexMap == null){
+//            throw new IllegalStateException("index is empty");
+//        }
+//        indexMap.forEach((word, data) -> {
+//            Hits hit = data.get(fileName);
+//            if(hit != null){
+//                hit.setValid(false);
+//                data.put(fileName, hit);
+//            }
+//        });
+//    }
+//
+//    public void show(String fileName){
+//        if (indexMap == null){
+//            throw new IllegalStateException("index is empty");
+//        }
+//        indexMap.forEach((word, data) -> {
+//            Hits hit = data.get(fileName);
+//            if(hit != null){
+//                hit.setValid(true);
+//                data.put(fileName, hit);
+//            }
+//        });
+//    }
+
+
+    public void addOccurrence(String fileId, Map<String, ArrayList> hit) {
+        ArrayList occur = hit.get(fileId);
+        occur.add(1);
+        hit.put(fileId, occur);
     }
 
-    public void show(String fileName){
-        if (indexMap == null){
-            throw new IllegalStateException("index is empty");
-        }
-        indexMap.forEach((word, data) -> {
-            Hits hit = data.get(fileName);
-            if(hit != null){
-                hit.setValid(true);
-                data.put(fileName, hit);
-            }
-        });
-    }
-
-    //Todo: should be a method of hits
-
-    public void addOccurrence(String fileId, Map<String, Hits> hits) {
-        Hits hit = hits.get(fileId);
-        hit.setNumOfHits(hit.getNumOfHits() + 1);
-        hits.put(fileId, hit);
-    }
-
-    //Todo: should be a method of hits
-
-    public void addHit(String fileId, Map<String, Hits> hits) {
-        Hits hit = new Hits(1, true);
-        hits.put(fileId, hit);
+    public void addHit(String fileId, Map<String, ArrayList> hit) {
+        ArrayList occur = new ArrayList();
+        occur.add(1);
+        hit.put(fileId, occur);
     }
 
     private void indexWord(String fileId, String word) {
-        Map<String, Hits> firstHit = new HashMap<>();
-        Hits hit = new Hits(1, true);
-        firstHit.put(fileId, hit);
+        Map<String, ArrayList> firstHit = new HashMap<>();
+        ArrayList occur = new ArrayList();
+        occur.add(1);
+        firstHit.put(fileId, occur);
         indexMap.put(word, firstHit);
     }
 }

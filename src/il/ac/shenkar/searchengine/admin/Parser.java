@@ -9,18 +9,10 @@ import java.util.*;
 
 class Parser {
 
-    ArrayList<String> parse(File toParse) throws FileNotFoundException {
-        Scanner sc = new Scanner(toParse);
+    public ArrayList<String> parse(File toParse) throws FileNotFoundException {
         ArrayList<String> words = new ArrayList<>();
-        String text = "";
         String parsedLine;
-        while (sc.hasNextLine()) {
-            String line = sc.nextLine();
-            if(!line.startsWith("#")) {
-                text += line;
-                text += " ";
-            }
-        }
+        String text = getText(toParse);
         text = text.toLowerCase();
         text = text.replace("\n", " ");
         String[] lines = text.split("\"");
@@ -44,5 +36,18 @@ class Parser {
         List<String> blacklist =  Arrays.asList(Utils.getBlackList());
         unique.removeAll(blacklist);
         return unique;
+    }
+
+    private String getText(File file) throws FileNotFoundException {
+        Scanner sc = new Scanner(file);
+        String text = "";
+        while (sc.hasNextLine()) {
+            String line = sc.nextLine();
+            if(!line.startsWith("#")) {
+                text += line;
+                text += " ";
+            }
+        }
+        return text;
     }
 }

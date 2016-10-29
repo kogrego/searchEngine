@@ -1,10 +1,13 @@
-package il.ac.shenkar.searchengine.admin;
+package il.ac.shenkar.searchengine.admin.gui;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+
+import il.ac.shenkar.searchengine.admin.CenteredFileChooser;
+import il.ac.shenkar.searchengine.admin.Indexer;
 import il.ac.shenkar.searchengine.utils.Utils;
 
 public class Admin extends JFrame{
@@ -27,6 +30,7 @@ public class Admin extends JFrame{
                 super.windowClosing(e);
                 try {
                     Utils.saveMapToFile();
+                    Utils.savePostingToFile();
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -40,7 +44,10 @@ public class Admin extends JFrame{
             String msg = "";
             Indexer indexer = new Indexer();
             for (File file : files) {
-                if(Utils.getStorageFileNames().containsKey(file.getName())) {
+                if(Utils.getStorageFileNames().contains(file.getName())) {
+                    msg += file.getName() + " already exists\n";
+                }
+                if(Utils.getStorageFileNames().contains(file.getName())) {
                     msg += file.getName() + " already exists\n";
                 }
                 else {
