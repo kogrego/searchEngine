@@ -21,7 +21,7 @@ public class Search {
         if (indexMap == null) {
             throw new IllegalStateException("Index file empty");
         }
-        ArrayList<String> results = new ArrayList<>();
+        Set<String> results = new HashSet<>();
         int i = 0;
         boolean notFlag = false;
         String tempWord;
@@ -95,7 +95,6 @@ public class Search {
                         ArrayList<String> list = new ArrayList<>();
                         ArrayList<String> tempList = tokenize(newWords.toArray(new String[newWords.size()]), parsedWords);
                         list.addAll(tempList.stream().filter(tempList::contains).collect(Collectors.toList()));
-                        results.clear();
                         results.addAll(list);
                         i+=2;
                     } else if (words[i + 1].startsWith("\"")) {
@@ -112,12 +111,19 @@ public class Search {
                         Map<String, Hits> tempAnd = indexMap.get(temp);
                         if (tempAnd != null) {
                             if(notFlag) {
+                                ArrayList<String> tempResults = new ArrayList<>();
+                                tempResults.addAll(new ArrayList<>(Utils.getStorageFileNames().values()));
                                 tempAnd.forEach((key, value) -> {
                                     if (value.isValid()) {
                                         results.remove(key);
                                     }
                                 });
                                 notFlag = false;
+                                ArrayList<String> list = tempResults.stream().filter(results::contains).collect(Collectors.toCollection(ArrayList::new));
+                                results.clear();
+                                results.addAll(list);
+                                i++;
+                                break;
                             }
                             ArrayList<String> list = results.stream().filter(s -> tempAnd.keySet().contains(s) && tempAnd.get(s).isValid()).collect(Collectors.toCollection(ArrayList::new));
                             results.clear();
@@ -130,12 +136,19 @@ public class Search {
                         Map<String, Hits> tempAnd = indexMap.get(tempWord);
                         if (tempAnd != null) {
                             if(notFlag) {
+                                ArrayList<String> tempResults = new ArrayList<>();
+                                tempResults.addAll(new ArrayList<>(Utils.getStorageFileNames().values()));
                                 tempAnd.forEach((key, value) -> {
                                     if (value.isValid()) {
-                                        results.remove(key);
+                                        tempResults.remove(key);
                                     }
                                 });
                                 notFlag = false;
+                                ArrayList<String> list = tempResults.stream().filter(results::contains).collect(Collectors.toCollection(ArrayList::new));
+                                results.clear();
+                                results.addAll(list);
+                                i += 2;
+                                break;
                             }
                             ArrayList<String> list = results.stream().filter(s -> tempAnd.keySet().contains(s) && tempAnd.get(s).isValid()).collect(Collectors.toCollection(ArrayList::new));
                             results.clear();
@@ -165,7 +178,6 @@ public class Search {
                         Set<String> set = new HashSet<>();
                         set.addAll(tempList);
                         set.addAll(results);
-                        results.clear();
                         results.addAll(set);
                         i+=2;
                     } else if (words[i + 1].startsWith("\"")) {
@@ -196,10 +208,8 @@ public class Search {
                                     set.add(key);
                                 }
                             });
-                            results.clear();
                             results.addAll(set);
                         } else {
-                            results.clear();
                             results.addAll(new ArrayList<>(Utils.getStorageFileNames().values()));
                         }
                         i++;
@@ -223,10 +233,8 @@ public class Search {
                                     set.add(key);
                                 }
                             });
-                            results.clear();
                             results.addAll(set);
                         } else {
-                            results.clear();
                             results.addAll(new ArrayList<>(Utils.getStorageFileNames().values()));
                         }
                         i += 2;
@@ -249,7 +257,6 @@ public class Search {
                         Set<String> set = new HashSet<>();
                         set.addAll(tempList);
                         set.addAll(results);
-                        results.clear();
                         results.addAll(set);
                         i+=2;
                     } else if (words[i].startsWith("\"")) {
@@ -280,10 +287,8 @@ public class Search {
                                     set.add(key);
                                 }
                             });
-                            results.clear();
                             results.addAll(set);
                         } else {
-                            results.clear();
                             results.addAll(new ArrayList<>(Utils.getStorageFileNames().values()));
                         }
                         i++;
@@ -307,10 +312,8 @@ public class Search {
                                     set.add(key);
                                 }
                             });
-                            results.clear();
                             results.addAll(set);
                         } else {
-                            results.clear();
                             results.addAll(new ArrayList<>(Utils.getStorageFileNames().values()));
                         }
                         i++;
@@ -318,7 +321,7 @@ public class Search {
                     break;
             }
         }
-        return results;
+        return new ArrayList<>(results);
     }
 
     private ArrayList<String> deMorgan(ArrayList<String> newWords) {
@@ -359,7 +362,7 @@ public class Search {
         Map<String, Map<String,ArrayList<Integer>>> returnDoc = new HashMap<>();
         String sCurrentLine;
         String doc = "";
-        filename = "./storage/" + filename;
+        filename = "./storage/" + filename + ".txt";
         BufferedReader br = new BufferedReader(new FileReader(filename));
         while ((sCurrentLine = br.readLine()) != null) {
             if(!sCurrentLine.startsWith("#")) {
