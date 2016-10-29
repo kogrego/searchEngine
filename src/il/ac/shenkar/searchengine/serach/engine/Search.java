@@ -28,6 +28,9 @@ public class Search {
         while (i < words.length) {
             switch (words[i]) {
                 case "NOT":
+                    if(results.size() >= 0){
+                        results.addAll(new ArrayList<>(Utils.getStorageFileNames().values()));
+                    }
                     if (words[i + 1].startsWith("(")) {
                         ArrayList<String> newWords = new ArrayList<>();
                         while (!words[i + 1].endsWith(")")) {
@@ -85,6 +88,10 @@ public class Search {
                             i++;
                         }
                         newWords.add(words[i + 1].replaceAll("[()]", ""));
+                        if(notFlag){
+                            newWords = deMorgan(newWords);
+                            notFlag = false;
+                        }
                         ArrayList<String> list = new ArrayList<>();
                         ArrayList<String> tempList = tokenize(newWords.toArray(new String[newWords.size()]), parsedWords);
                         list.addAll(tempList.stream().filter(tempList::contains).collect(Collectors.toList()));
@@ -150,6 +157,10 @@ public class Search {
                             i++;
                         }
                         newWords.add(words[i + 1].replaceAll("[()]", ""));
+                        if(notFlag){
+                            newWords = deMorgan(newWords);
+                            notFlag = false;
+                        }
                         ArrayList<String> tempList = tokenize(newWords.toArray(new String[newWords.size()]), parsedWords);
                         Set<String> set = new HashSet<>();
                         set.addAll(tempList);
@@ -187,6 +198,9 @@ public class Search {
                             });
                             results.clear();
                             results.addAll(set);
+                        } else {
+                            results.clear();
+                            results.addAll(new ArrayList<>(Utils.getStorageFileNames().values()));
                         }
                         i++;
                     } else {
@@ -212,6 +226,7 @@ public class Search {
                             results.clear();
                             results.addAll(set);
                         } else {
+                            results.clear();
                             results.addAll(new ArrayList<>(Utils.getStorageFileNames().values()));
                         }
                         i += 2;
@@ -226,6 +241,10 @@ public class Search {
                             i++;
                         }
                         newWords.add(words[i].replaceAll("[()]", ""));
+                        if(notFlag){
+                            newWords = deMorgan(newWords);
+                            notFlag = false;
+                        }
                         ArrayList<String> tempList = tokenize(newWords.toArray(new String[newWords.size()]), parsedWords);
                         Set<String> set = new HashSet<>();
                         set.addAll(tempList);
@@ -246,6 +265,14 @@ public class Search {
                         parsedWords.add(temp);
                         Map<String, Hits> tempDefault = indexMap.get(temp);
                         if (tempDefault != null) {
+                            if(notFlag) {
+                                tempDefault.forEach((key, value) -> {
+                                    if (value.isValid()) {
+                                        results.remove(key);
+                                    }
+                                });
+                                notFlag = false;
+                            }
                             Set<String> set = new HashSet<>();
                             set.addAll(results);
                             tempDefault.forEach((key,value)->{
@@ -255,6 +282,9 @@ public class Search {
                             });
                             results.clear();
                             results.addAll(set);
+                        } else {
+                            results.clear();
+                            results.addAll(new ArrayList<>(Utils.getStorageFileNames().values()));
                         }
                         i++;
                     } else {
@@ -262,6 +292,14 @@ public class Search {
                         parsedWords.add(tempWord);
                         Map<String, Hits> tempDefault = indexMap.get(tempWord);
                         if (tempDefault != null) {
+                            if(notFlag) {
+                                tempDefault.forEach((key, value) -> {
+                                    if (value.isValid()) {
+                                        results.remove(key);
+                                    }
+                                });
+                                notFlag = false;
+                            }
                             Set<String> set = new HashSet<>();
                             set.addAll(results);
                             tempDefault.forEach((key,value)->{
@@ -271,6 +309,9 @@ public class Search {
                             });
                             results.clear();
                             results.addAll(set);
+                        } else {
+                            results.clear();
+                            results.addAll(new ArrayList<>(Utils.getStorageFileNames().values()));
                         }
                         i++;
                     }
@@ -278,6 +319,32 @@ public class Search {
             }
         }
         return results;
+    }
+
+    private ArrayList<String> deMorgan(ArrayList<String> newWords) {
+        int i = 0;
+        String[] words = newWords.toArray(new String[newWords.size()]);
+        ArrayList<String> deMorgan = new ArrayList<>();
+        while (i < words.length){
+            switch (words[i]){
+                case "OR":
+                    deMorgan.add("AND");
+                    break;
+                case "NOT":
+                    break;
+                case "AND":
+                    deMorgan.add("OR");
+                    break;
+                default:
+                    if(i == 0 || !Objects.equals(words[i - 1], "NOT")){
+                        deMorgan.add("NOT");
+                    }
+                    deMorgan.add(words[i]);
+                    break;
+            }
+            i++;
+        }
+        return deMorgan;
     }
 
     public ArrayList<String> search(String term, ArrayList<String> parsedWords) {
