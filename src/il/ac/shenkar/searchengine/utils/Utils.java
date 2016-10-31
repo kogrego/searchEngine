@@ -90,12 +90,15 @@ public class Utils {
     }
 
     public static void getMapFromFile() throws IOException, ClassNotFoundException {
-        String mapJson;
+        String mapJson = null;
         Gson gson = new Gson();
         if (index.exists()) {
             mapJson = new Scanner(index).useDelimiter("\\Z").next();
         } else {
-            mapJson = new Scanner(new File(INDEX)).useDelimiter("\\Z").next();
+            File indexFile = new File(INDEX);
+            if(indexFile.exists()) {
+                mapJson = new Scanner(indexFile).useDelimiter("\\Z").next();
+            }
         }
         Type mapType = new TypeToken<Map<String, Map<String, ArrayList>>>() {
         }.getType();
@@ -111,12 +114,15 @@ public class Utils {
     }
 
     public static void getPostingFromFile() throws IOException, ClassNotFoundException {
-        String mapJson;
+        String mapJson = null;
         Gson gson = new Gson();
         if (posting.exists()) {
             mapJson = new Scanner(posting).useDelimiter("\\Z").next();
         } else {
-            mapJson = new Scanner(new File(POSTING)).useDelimiter("\\Z").next();
+            File postingFile = new File(POSTING);
+            if(postingFile.exists()) {
+                mapJson = new Scanner(postingFile).useDelimiter("\\Z").next();
+            }
         }
         Type mapType = new TypeToken<Map<String, Doc>>() {
         }.getType();

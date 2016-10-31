@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import il.ac.shenkar.searchengine.serach.Search;
+import il.ac.shenkar.searchengine.utils.Doc;
 import il.ac.shenkar.searchengine.utils.Utils;
 
 public class Form extends JFrame {
@@ -114,7 +115,8 @@ public class Form extends JFrame {
         resultsLabel.setText("Search Results:\n");
         DefaultListModel listModel = new DefaultListModel();
         results.forEach((result)-> {
-            listModel.addElement(Utils.getPostingMap().get(result).getFileName());
+            Doc bla = Utils.getPostingMap().get(result);
+            listModel.addElement(bla.getFileName());
         });
         searchResults.setModel(listModel);
     }

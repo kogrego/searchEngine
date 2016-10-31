@@ -35,6 +35,7 @@ public class Indexer {
                 indexWord(doc.getSerial(), word);
             }
         });
+        postingMap.put(doc.getSerial(), doc);
     }
 
 //    public void hide(String fileName){

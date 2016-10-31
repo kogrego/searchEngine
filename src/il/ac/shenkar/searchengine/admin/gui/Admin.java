@@ -47,15 +47,13 @@ public class Admin extends JFrame{
                 if(Utils.getStorageFileNames().contains(file.getName())) {
                     msg += file.getName() + " already exists\n";
                 }
-                if(Utils.getStorageFileNames().contains(file.getName())) {
-                    msg += file.getName() + " already exists\n";
-                }
                 else {
                     try {
                         File storedFile = Utils.storeFile(file);
                         Doc doc = new Doc(storedFile.getName());
                         indexer.index(storedFile, doc);
                         Utils.saveMapToFile();
+                        Utils.savePostingToFile();
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
