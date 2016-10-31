@@ -23,21 +23,7 @@ public class Admin extends JFrame{
     public Admin() {
         super("search engine - admin");
         initComponents();
-
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-                try {
-                    Utils.saveMapToFile();
-                    Utils.savePostingToFile();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                System.exit(0);
-            }
-        });
-
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         loadButton.addActionListener(e -> {
             fileChooser.showOpenDialog(loadButton);
             File[] files = fileChooser.getSelectedFiles();

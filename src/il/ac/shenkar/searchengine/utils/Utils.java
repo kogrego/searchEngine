@@ -51,13 +51,7 @@ public class Utils {
 
 
     public static ArrayList<String> getStorageFileNames() {
-        ArrayList<String> fileNames = new ArrayList<>();
-        if (postingMap != null) {
-            postingMap.forEach((key, doc) -> {
-                fileNames.add(doc.getFileName());
-            });
-        }
-        return fileNames;
+        return new ArrayList<>(postingMap.keySet());
     }
 
     public static File storeFile(File src) throws IOException {

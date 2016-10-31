@@ -115,8 +115,8 @@ public class Form extends JFrame {
         resultsLabel.setText("Search Results:\n");
         DefaultListModel listModel = new DefaultListModel();
         results.forEach((result)-> {
-            Doc bla = Utils.getPostingMap().get(result);
-            listModel.addElement(bla.getFileName());
+            Doc doc = Utils.getPostingMap().get(result);
+            listModel.addElement(doc.getFileName());
         });
         searchResults.setModel(listModel);
     }

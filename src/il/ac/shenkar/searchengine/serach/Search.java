@@ -1,6 +1,7 @@
 package il.ac.shenkar.searchengine.serach;
 
 import il.ac.shenkar.searchengine.utils.Utils;
+
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,12 +51,7 @@ public class Search {
                         parsedWords.add(temp);
                         Map<String, ArrayList> tempNot = indexMap.get(temp);
                         if (tempNot != null) {
-                            tempNot.forEach((key, value)->{
-                                results.remove(key);
-//                                if(value.isValid()){
-//                                    results.remove(key);
-//                                }
-                            });
+                            tempNot.forEach((key, value)-> results.remove(key));
                         }
                         i++;
                     } else {
@@ -63,12 +59,7 @@ public class Search {
                         parsedWords.add(tempWord);
                         Map<String, ArrayList> tempNot = indexMap.get(tempWord);
                         if (tempNot != null) {
-                            tempNot.forEach((key, value)->{
-                                results.remove(key);
-//                                if(value.isValid()){
-//                                    results.remove(key);
-//                                }
-                            });
+                            tempNot.forEach((key, value)-> results.remove(key));
                         }
                         i += 2;
                     }
@@ -111,12 +102,7 @@ public class Search {
                             if(notFlag) {
                                 ArrayList<String> tempResults = new ArrayList<>();
                                 tempResults.addAll(new ArrayList<>(Utils.getStorageFileNames()));
-                                tempAnd.forEach((key, value) -> {
-                                    results.remove(key);
-//                                    if (value.isValid()) {
-//                                        results.remove(key);
-//                                    }
-                                });
+                                tempAnd.forEach((key, value) -> results.remove(key));
                                 notFlag = false;
                                 ArrayList<String> list = tempResults.stream().filter(results::contains).collect(Collectors.toCollection(ArrayList::new));
                                 results.clear();
@@ -125,9 +111,10 @@ public class Search {
                                 break;
                             }
                             ArrayList<String> list = results.stream().filter(s -> tempAnd.keySet().contains(s)).collect(Collectors.toCollection(ArrayList::new));
-                            //ArrayList<String> list = results.stream().filter(s -> tempAnd.keySet().contains(s) && tempAnd.get(s).isValid()).collect(Collectors.toCollection(ArrayList::new));
                             results.clear();
                             results.addAll(list);
+                        } else {
+                            results.clear();
                         }
                         i++;
                     } else {
@@ -138,12 +125,7 @@ public class Search {
                             if(notFlag) {
                                 ArrayList<String> tempResults = new ArrayList<>();
                                 tempResults.addAll(new ArrayList<>(Utils.getStorageFileNames()));
-                                tempAnd.forEach((key, value) -> {
-                                    tempResults.remove(key);
-//                                    if (value.isValid()) {
-//                                        tempResults.remove(key);
-//                                    }
-                                });
+                                tempAnd.forEach((key, value) -> tempResults.remove(key));
                                 notFlag = false;
                                 ArrayList<String> list = tempResults.stream().filter(results::contains).collect(Collectors.toCollection(ArrayList::new));
                                 results.clear();
@@ -152,9 +134,10 @@ public class Search {
                                 break;
                             }
                             ArrayList<String> list = results.stream().filter(s -> tempAnd.keySet().contains(s)).collect(Collectors.toCollection(ArrayList::new));
-                            //ArrayList<String> list = results.stream().filter(s -> tempAnd.keySet().contains(s) && tempAnd.get(s).isValid()).collect(Collectors.toCollection(ArrayList::new));
                             results.clear();
                             results.addAll(list);
+                        } else {
+                            results.clear();
                         }
                         i += 2;
                     }
@@ -196,22 +179,12 @@ public class Search {
                         Map<String, ArrayList> tempOr = indexMap.get(temp);
                         if (tempOr != null) {
                             if(notFlag) {
-                                tempOr.forEach((key, value) -> {
-                                    results.remove(key);
-//                                    if (value.isValid()) {
-//                                        results.remove(key);
-//                                    }
-                                });
+                                tempOr.forEach((key, value) -> results.remove(key));
                                 notFlag = false;
                             }
                             Set<String> set = new HashSet<>();
                             set.addAll(results);
-                            tempOr.forEach((key,value)->{
-                                set.add(key);
-//                                if(value.isValid()){
-//                                    set.add(key);
-//                                }
-                            });
+                            tempOr.forEach((key,value)-> set.add(key));
                             results.addAll(set);
                         } else {
                             results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
@@ -223,22 +196,12 @@ public class Search {
                         Map<String, ArrayList> tempOr = indexMap.get(tempWord);
                         if (tempOr != null) {
                             if(notFlag) {
-                                tempOr.forEach((key, value) -> {
-                                    results.remove(key);
-//                                    if (value.isValid()) {
-//                                        results.remove(key);
-//                                    }
-                                });
+                                tempOr.forEach((key, value) -> results.remove(key));
                                 notFlag = false;
                             }
                             Set<String> set = new HashSet<>();
                             set.addAll(results);
-                            tempOr.forEach((key,value)->{
-                                set.add(key);
-//                                if(value.isValid()){
-//                                    set.add(key);
-//                                }
-                            });
+                            tempOr.forEach((key,value)-> set.add(key));
                             results.addAll(set);
                         } else {
                             results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
@@ -279,22 +242,12 @@ public class Search {
                         Map<String, ArrayList> tempDefault = indexMap.get(temp);
                         if (tempDefault != null) {
                             if(notFlag) {
-                                tempDefault.forEach((key, value) -> {
-                                    results.remove(key);
-//                                    if (value.isValid()) {
-//                                        results.remove(key);
-//                                    }
-                                });
+                                tempDefault.forEach((key, value) -> results.remove(key));
                                 notFlag = false;
                             }
                             Set<String> set = new HashSet<>();
                             set.addAll(results);
-                            tempDefault.forEach((key,value)->{
-                                set.add(key);
-//                                if(value.isValid()){
-//                                    set.add(key);
-//                                }
-                            });
+                            tempDefault.forEach((key,value)-> set.add(key));
                             results.addAll(set);
                         } else {
                             results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
@@ -306,22 +259,12 @@ public class Search {
                         Map<String, ArrayList> tempDefault = indexMap.get(tempWord);
                         if (tempDefault != null) {
                             if(notFlag) {
-                                tempDefault.forEach((key, value) -> {
-                                    results.remove(key);
-//                                    if (value.isValid()) {
-//                                        results.remove(key);
-//                                    }
-                                });
+                                tempDefault.forEach((key, value) -> results.remove(key));
                                 notFlag = false;
                             }
                             Set<String> set = new HashSet<>();
                             set.addAll(results);
-                            tempDefault.forEach((key,value)->{
-                                set.add(key);
-//                                if(value.isValid()){
-//                                    set.add(key);
-//                                }
-                            });
+                            tempDefault.forEach((key,value)-> set.add(key));
                             results.addAll(set);
                         } else {
                             results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
@@ -331,6 +274,11 @@ public class Search {
                     break;
             }
         }
+        results.forEach((key)->{
+            if(Utils.getPostingMap().containsKey(key)){
+                results.remove(key);
+            }
+        });
         return new ArrayList<>(results);
     }
 
