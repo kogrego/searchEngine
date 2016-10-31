@@ -54,8 +54,8 @@ public class Utils {
         return new ArrayList<>(postingMap.keySet());
     }
 
-    public static File storeFile(File src) throws IOException {
-        Doc doc = new Doc(src.getName());
+    public static File storeFile(File src, Doc doc) throws IOException {
+        doc.setSerial();
         if (postingMap == null) {
             postingMap = new HashMap<>();
         }

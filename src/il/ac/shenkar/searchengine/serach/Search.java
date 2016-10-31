@@ -29,15 +29,9 @@ public class Search {
                         results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
                     }
                     if (words[i + 1].startsWith("(")) {
-                        ArrayList<String> newWords = new ArrayList<>();
-                        while (!words[i + 1].endsWith(")")) {
-                            String temp = words[i + 1].replaceAll("[()]", "");
-                            newWords.add(temp);
-                            i++;
-                        }
-                        newWords.add(words[i + 1].replaceAll("[()]", ""));
+                        ArrayList<String> newWords = brackets(words, i);
                         results.removeAll(tokenize(newWords.toArray(new String[newWords.size()]), parsedWords));
-                        i+=2;
+                        i+=(newWords.size()+1);
                     } else if (words[i + 1].startsWith("\"")) {
                         String temp = "";
                         while (!words[i + 1].endsWith("\"")) {
@@ -70,13 +64,7 @@ public class Search {
                         notFlag = true;
                     }
                     if (words[i + 1].startsWith("(")) {
-                        ArrayList<String> newWords = new ArrayList<>();
-                        while (!words[i + 1].endsWith(")")) {
-                            String temp = words[i + 1].replaceAll("[()]", "");
-                            newWords.add(temp);
-                            i++;
-                        }
-                        newWords.add(words[i + 1].replaceAll("[()]", ""));
+                        ArrayList<String> newWords = brackets(words, i);
                         if(notFlag){
                             newWords = deMorgan(newWords);
                             notFlag = false;
@@ -85,7 +73,7 @@ public class Search {
                         ArrayList<String> tempList = tokenize(newWords.toArray(new String[newWords.size()]), parsedWords);
                         list.addAll(tempList.stream().filter(tempList::contains).collect(Collectors.toList()));
                         results.addAll(list);
-                        i+=2;
+                        i+=(newWords.size()+1);
                     } else if (words[i + 1].startsWith("\"")) {
                         String temp = "";
                         while (!words[i + 1].endsWith("\"")) {
@@ -148,13 +136,7 @@ public class Search {
                         notFlag = true;
                     }
                     if (words[i + 1].startsWith("(")) {
-                        ArrayList<String> newWords = new ArrayList<>();
-                        while (!words[i + 1].endsWith(")")) {
-                            String temp = words[i + 1].replaceAll("[()]", "");
-                            newWords.add(temp);
-                            i++;
-                        }
-                        newWords.add(words[i + 1].replaceAll("[()]", ""));
+                        ArrayList<String> newWords = brackets(words, i);
                         if(notFlag){
                             newWords = deMorgan(newWords);
                             notFlag = false;
@@ -164,7 +146,7 @@ public class Search {
                         set.addAll(tempList);
                         set.addAll(results);
                         results.addAll(set);
-                        i+=2;
+                        i+=(newWords.size()+1);
                     } else if (words[i + 1].startsWith("\"")) {
                         String temp = "";
                         while (!words[i + 1].endsWith("\"")) {
@@ -211,13 +193,7 @@ public class Search {
                     break;
                 default:
                     if (words[i].startsWith("(")) {
-                        ArrayList<String> newWords = new ArrayList<>();
-                        while (!words[i].endsWith(")")) {
-                            String temp = words[i].replaceAll("[()]", "");
-                            newWords.add(temp);
-                            i++;
-                        }
-                        newWords.add(words[i].replaceAll("[()]", ""));
+                        ArrayList<String> newWords = brackets(words, i);
                         if(notFlag){
                             newWords = deMorgan(newWords);
                             notFlag = false;
@@ -227,7 +203,7 @@ public class Search {
                         set.addAll(tempList);
                         set.addAll(results);
                         results.addAll(set);
-                        i+=2;
+                        i+=(newWords.size()+1);
                     } else if (words[i].startsWith("\"")) {
                         String temp = "";
                         while (!words[i].endsWith("\"")) {
@@ -275,7 +251,7 @@ public class Search {
             }
         }
         results.forEach((key)->{
-            if(Utils.getPostingMap().containsKey(key)){
+            if(Utils.getPostingMap().get(key).isHidden()){
                 results.remove(key);
             }
         });
@@ -354,4 +330,14 @@ public class Search {
         return returnDoc;
     }
 
+    private ArrayList<String> brackets(String[] words, int i) {
+        ArrayList<String> newWords = new ArrayList<>();
+        while (!words[i + 1].endsWith(")")) {
+            String temp = words[i + 1].replaceAll("[()]", "");
+            newWords.add(temp);
+            i++;
+        }
+        newWords.add(words[i + 1].replaceAll("[()]", ""));
+        return newWords;
+    }
 }

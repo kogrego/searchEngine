@@ -35,8 +35,8 @@ public class Admin extends JFrame{
                 }
                 else {
                     try {
-                        File storedFile = Utils.storeFile(file);
-                        Doc doc = new Doc(storedFile.getName());
+                        Doc doc = new Doc(file.getName());
+                        File storedFile = Utils.storeFile(file, doc);
                         indexer.index(storedFile, doc);
                         Utils.saveMapToFile();
                         Utils.savePostingToFile();

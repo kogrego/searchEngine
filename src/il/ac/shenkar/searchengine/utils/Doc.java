@@ -9,7 +9,6 @@ public class Doc {
 
     public Doc(String fileName) {
         this.fileName = fileName;
-        this.serial = String.valueOf(System.currentTimeMillis());
         this.isHidden = false;
     }
 
@@ -27,6 +26,14 @@ public class Doc {
 
     public String getSerial() {
         return serial;
+    }
+
+    public void setSerial() {
+        this.serial = String.valueOf(System.currentTimeMillis());
+    }
+
+    public boolean isHidden() {
+        return isHidden;
     }
 }
 
