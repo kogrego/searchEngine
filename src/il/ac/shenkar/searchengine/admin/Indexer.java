@@ -18,7 +18,7 @@ public class Indexer {
     }
 
     public void index(File toAdd, Doc doc) throws IOException {
-        ArrayList<String> wordsFound = parser.parse(toAdd);
+        ArrayList<String> wordsFound = parser.parse(toAdd, doc);
         ArrayList<String> goodWords = parser.blackList(wordsFound);
         goodWords.forEach((word)-> {
             if(indexMap.containsKey(word)) {

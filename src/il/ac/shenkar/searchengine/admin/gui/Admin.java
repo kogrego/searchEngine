@@ -1,10 +1,6 @@
 package il.ac.shenkar.searchengine.admin.gui;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -29,7 +25,10 @@ public class Admin extends JFrame{
         super("search engine - admin");
         initComponents();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
         loadButton.addActionListener(e -> {
+            fileChooser.setCurrentDirectory(new File("./input"));
+            fileChooser.setDialogTitle("Search Engine - load");
             fileChooser.showOpenDialog(loadButton);
             File[] files = fileChooser.getSelectedFiles();
             String msg = "";
@@ -56,17 +55,21 @@ public class Admin extends JFrame{
         });
 
         hideButton.addActionListener(e -> {
-            fileChooser.showOpenDialog(loadButton);
+            fileChooser.setCurrentDirectory(new File("./storage"));
+            fileChooser.setDialogTitle("Search Engine - hide");
+            fileChooser.showOpenDialog(hideButton);
             File[] files = fileChooser.getSelectedFiles();
             Map<String, Doc> posting = Utils.getPostingMap();
+            final String[] text = {""};
             posting.forEach((key, doc)->{
                 for(File file: files){
                     if(Objects.equals(file.getName(), doc.getFileName())){
                         doc.hide();
-                        resultLabel.setText(file.getName() + " is now hidden");
+                        text[0] += file.getName() + " is now hidden\n";
                     }
                 }
             });
+            resultLabel.setText(text[0]);
             try {
                 Utils.savePostingToFile();
             } catch (IOException e1) {
@@ -75,17 +78,21 @@ public class Admin extends JFrame{
         });
 
         showButton.addActionListener(e -> {
-            fileChooser.showOpenDialog(loadButton);
+            fileChooser.setCurrentDirectory(new File("./storage"));
+            fileChooser.setDialogTitle("Search Engine - show");
+            fileChooser.showOpenDialog(showButton);
             File[] files = fileChooser.getSelectedFiles();
             Map<String, Doc> posting = Utils.getPostingMap();
+            final String[] text = {""};
             posting.forEach((key, doc)->{
                 for(File file: files){
                     if(Objects.equals(file.getName(), doc.getFileName())){
                         doc.show();
-                        resultLabel.setText(file.getName() + " is now visible");
+                        text[0] += file.getName() + " is now visible\n";
                     }
                 }
             });
+            resultLabel.setText(text[0]);
             try {
                 Utils.savePostingToFile();
             } catch (IOException e1) {
@@ -103,8 +110,6 @@ public class Admin extends JFrame{
         hideButton.setBorderPainted(false);
 
         fileChooser = new CenteredFileChooser();
-        fileChooser.setCurrentDirectory(new File("./input"));
-        fileChooser.setDialogTitle("Search Engine - Admin");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setMultiSelectionEnabled(true);
 

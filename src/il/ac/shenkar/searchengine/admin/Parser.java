@@ -1,5 +1,6 @@
 package il.ac.shenkar.searchengine.admin;
 
+import il.ac.shenkar.searchengine.utils.Doc;
 import il.ac.shenkar.searchengine.utils.Utils;
 
 import java.io.File;
@@ -9,10 +10,10 @@ import java.util.*;
 
 class Parser {
 
-    public ArrayList<String> parse(File toParse) throws FileNotFoundException {
+    public ArrayList<String> parse(File toParse, Doc doc) throws FileNotFoundException {
         ArrayList<String> words = new ArrayList<>();
         String parsedLine;
-        String text = getText(toParse);
+        String text = getText(toParse, doc);
         text = text.toLowerCase();
         text = text.replace("\n", " ");
         String[] lines = text.split("\"");
@@ -38,16 +39,23 @@ class Parser {
         return unique;
     }
 
-    private String getText(File file) throws FileNotFoundException {
+    private String getText(File file, Doc doc) throws FileNotFoundException {
         Scanner sc = new Scanner(file);
         String text = "";
+        int i = 0;
+        String preview = "";
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
             if(!line.startsWith("#")) {
+                if(i < 3) {
+                    preview += line + '\n';
+                    i++;
+                }
                 text += line;
                 text += " ";
             }
         }
+        doc.setPreview(preview);
         return text;
     }
 }
