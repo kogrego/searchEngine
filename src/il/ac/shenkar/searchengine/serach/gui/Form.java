@@ -33,7 +33,7 @@ public class Form extends JFrame implements ListSelectionListener {
     private JPanel toolBar;
     private JLabel resultsLabel;
     private JTabbedPane tabbedPane;
-    DefaultListModel<String> model;
+    private DefaultListModel<String> model;
     private ArrayList<String> searchTerms;
     private DefaultListModel listModel;
     private ArrayList<String> results;
@@ -77,18 +77,6 @@ public class Form extends JFrame implements ListSelectionListener {
                 showResults(results);
             }
         });
-
-//        hideFilesSButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                fileChooser.showOpenDialog(loadButton);
-//                File[] files = fileChooser.getSelectedFiles();
-//                Indexer indexer = new Indexer();
-//                for(File file : files) {
-//                    indexer.remove(file.getName());
-//                }
-//            }
-//        });
 
     }
 

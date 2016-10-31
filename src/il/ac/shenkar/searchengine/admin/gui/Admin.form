@@ -20,7 +20,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <grid id="7fe74" binding="actionPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="7fe74" binding="actionPanel" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="32" left="0" bottom="32" right="0"/>
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="0" indent="0" use-parent-layout="false"/>
@@ -43,16 +43,26 @@
                   <text value="Load File(s)"/>
                 </properties>
               </component>
-              <component id="fa10b" class="javax.swing.JButton" binding="deleteButton">
+              <component id="fa10b" class="javax.swing.JButton" binding="showButton">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
                     <preferred-size width="186" height="32"/>
                   </grid>
                 </constraints>
                 <properties>
+                  <background color="-14238805"/>
+                  <foreground color="-1"/>
+                  <text value="Show File(s)"/>
+                </properties>
+              </component>
+              <component id="5c3d5" class="javax.swing.JButton" binding="hideButton">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
                   <background color="-4491907"/>
                   <foreground color="-1"/>
-                  <text value="Remove File(s)"/>
+                  <text value=" Hide File(s)"/>
                 </properties>
               </component>
             </children>
