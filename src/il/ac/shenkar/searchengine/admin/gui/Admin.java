@@ -1,6 +1,7 @@
 package il.ac.shenkar.searchengine.admin.gui;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -109,9 +110,15 @@ public class Admin extends JFrame{
         showButton.setBorderPainted(false);
         hideButton.setBorderPainted(false);
 
+        loadButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        showButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        hideButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         fileChooser = new CenteredFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setMultiSelectionEnabled(true);
+
+        resultLabel.setEnabled(false);
 
         setContentPane(rootPanel);
         setVisible(true);

@@ -41,6 +41,7 @@
                   <font swing-font="Button.font"/>
                   <foreground color="-1"/>
                   <text value="Load File(s)"/>
+                  <toolTipText value=""/>
                 </properties>
               </component>
               <component id="fa10b" class="javax.swing.JButton" binding="showButton">
@@ -53,6 +54,7 @@
                   <background color="-14238805"/>
                   <foreground color="-1"/>
                   <text value="Show File(s)"/>
+                  <toolTipText value=""/>
                 </properties>
               </component>
               <component id="5c3d5" class="javax.swing.JButton" binding="hideButton">
@@ -65,6 +67,7 @@
                   <background color="-4491907"/>
                   <foreground color="-1"/>
                   <text value=" Hide File(s)"/>
+                  <toolTipText value=""/>
                 </properties>
               </component>
             </children>
