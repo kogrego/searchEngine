@@ -14,7 +14,7 @@ public class Utils {
             "was", "so", "his", "has", ""};
     private static File index;
     private static File posting;
-    private static Map<String, Map<String, ArrayList>> map;
+    private static Map<String, Map<String, ArrayList<Integer>>> map;
     private static Map<String, Doc> postingMap;
     private static final String INDEX = "./index.txt";
     private static final String POSTING = "./posting.txt";
@@ -35,7 +35,7 @@ public class Utils {
         }
     }
 
-    public static Map<String, Map<String, ArrayList>> getMap() {
+    public static Map<String, Map<String, ArrayList<Integer>>> getMap() {
         if (map == null) {
             map = new HashMap<>();
         }

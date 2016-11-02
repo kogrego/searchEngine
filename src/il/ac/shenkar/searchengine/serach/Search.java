@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class Search {
 
-    private Map<String, Map<String, ArrayList>> indexMap;
+    private Map<String, Map<String, ArrayList<Integer>>> indexMap;
 
     public Search() {
         this.indexMap = Utils.getMap();
@@ -43,7 +43,7 @@ public class Search {
                         temp = temp.toLowerCase();
                         temp = temp.replaceAll("\"", "");
                         parsedWords.add(temp);
-                        Map<String, ArrayList> tempNot = indexMap.get(temp);
+                        Map<String, ArrayList<Integer>> tempNot = indexMap.get(temp);
                         if (tempNot != null) {
                             tempNot.forEach((key, value)-> results.remove(key));
                         }
@@ -51,7 +51,7 @@ public class Search {
                     } else {
                         tempWord = words[i + 1].toLowerCase();
                         parsedWords.add(tempWord);
-                        Map<String, ArrayList> tempNot = indexMap.get(tempWord);
+                        Map<String, ArrayList<Integer>> tempNot = indexMap.get(tempWord);
                         if (tempNot != null) {
                             tempNot.forEach((key, value)-> results.remove(key));
                         }
@@ -85,7 +85,7 @@ public class Search {
                         temp = temp.toLowerCase();
                         temp = temp.replaceAll("\"", "");
                         parsedWords.add(temp);
-                        Map<String, ArrayList> tempAnd = indexMap.get(temp);
+                        Map<String, ArrayList<Integer>> tempAnd = indexMap.get(temp);
                         if (tempAnd != null) {
                             if(notFlag) {
                                 ArrayList<String> tempResults = new ArrayList<>();
@@ -108,7 +108,7 @@ public class Search {
                     } else {
                         tempWord = words[i + 1].toLowerCase();
                         parsedWords.add(tempWord);
-                        Map<String, ArrayList> tempAnd = indexMap.get(tempWord);
+                        Map<String, ArrayList<Integer>> tempAnd = indexMap.get(tempWord);
                         if (tempAnd != null) {
                             if(notFlag) {
                                 ArrayList<String> tempResults = new ArrayList<>();
@@ -158,7 +158,7 @@ public class Search {
                         temp = temp.toLowerCase();
                         temp = temp.replaceAll("\"", "");
                         parsedWords.add(temp);
-                        Map<String, ArrayList> tempOr = indexMap.get(temp);
+                        Map<String, ArrayList<Integer>> tempOr = indexMap.get(temp);
                         if (tempOr != null) {
                             if(notFlag) {
                                 tempOr.forEach((key, value) -> results.remove(key));
@@ -175,7 +175,7 @@ public class Search {
                     } else {
                         tempWord = words[i + 1].toLowerCase();
                         parsedWords.add(tempWord);
-                        Map<String, ArrayList> tempOr = indexMap.get(tempWord);
+                        Map<String, ArrayList<Integer>> tempOr = indexMap.get(tempWord);
                         if (tempOr != null) {
                             if(notFlag) {
                                 tempOr.forEach((key, value) -> results.remove(key));
@@ -215,7 +215,7 @@ public class Search {
                         temp = temp.toLowerCase();
                         temp = temp.replaceAll("\"", "");
                         parsedWords.add(temp);
-                        Map<String, ArrayList> tempDefault = indexMap.get(temp);
+                        Map<String, ArrayList<Integer>> tempDefault = indexMap.get(temp);
                         if (tempDefault != null) {
                             if(notFlag) {
                                 tempDefault.forEach((key, value) -> results.remove(key));
@@ -232,7 +232,7 @@ public class Search {
                     } else {
                         tempWord = words[i].toLowerCase();
                         parsedWords.add(tempWord);
-                        Map<String, ArrayList> tempDefault = indexMap.get(tempWord);
+                        Map<String, ArrayList<Integer>> tempDefault = indexMap.get(tempWord);
                         if (tempDefault != null) {
                             if(notFlag) {
                                 tempDefault.forEach((key, value) -> results.remove(key));
