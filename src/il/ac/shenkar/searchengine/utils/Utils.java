@@ -63,7 +63,7 @@ public class Utils {
         File dest = new File("./storage/" + doc.getFileName());
         InputStream is = new FileInputStream(src);
         OutputStream os = new FileOutputStream(dest);
-        String head = "# MetaData \n# original file name: " + src.getName() + "\n";
+        String head = "# MetaData \n# original file name: " + src.getName() + "\n# serial " + doc.getSerial() + "\n";
         os.write(head.getBytes());
         byte[] buffer = new byte[1024];
         int length;
@@ -94,7 +94,7 @@ public class Utils {
                 mapJson = new Scanner(indexFile).useDelimiter("\\Z").next();
             }
         }
-        Type mapType = new TypeToken<Map<String, Map<String, ArrayList>>>() {
+        Type mapType = new TypeToken<Map<String, Map<String, ArrayList<Integer>>>>() {
         }.getType();
         map = gson.fromJson(mapJson, mapType);
     }

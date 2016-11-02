@@ -8,9 +8,10 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.print.PrinterException;
 import java.io.*;
+import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Map;
 
 import il.ac.shenkar.searchengine.serach.Search;
 import il.ac.shenkar.searchengine.utils.Doc;
@@ -78,6 +79,14 @@ public class Form extends JFrame implements ListSelectionListener {
             }
         });
 
+        printButton.addActionListener(e-> {
+            try {
+                showDocument.print();
+            } catch (PrinterException e1) {
+                e1.printStackTrace();
+            }
+        });
+
     }
 
     private void initComponents() {
@@ -108,33 +117,34 @@ public class Form extends JFrame implements ListSelectionListener {
         searchResults.removeListSelectionListener(this);
     }
 
-    private void highlight(Map<String, ArrayList<Integer>> wordData) {
+    private void highlight(ArrayList<String> words, String index) {
         Highlighter highlighter = showDocument.getHighlighter();
         Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.pink);
-        wordData.forEach((word, loc) -> loc.forEach((num) -> {
-            try {
-                highlighter.addHighlight(num, num + word.length(), painter);
-            } catch (BadLocationException e1) {
-                e1.printStackTrace();
-            }
-        }));
+        words.forEach((word)->{
+            ArrayList<Integer> locations = Utils.getMap().get(word).get(index);
+            locations.forEach((location) -> {
+                try {
+                    highlighter.addHighlight(location, location + word.length(), painter);
+                } catch (BadLocationException e1) {
+                    e1.printStackTrace();
+                }
+            });
+        });
     }
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (!e.getValueIsAdjusting()) {
-            Map<String, Map<String, ArrayList<Integer>>> doc = null;
+            AbstractMap.Entry<String, String> KVPair = null;
             try {
-                doc = search.showDocument(searchResults.getSelectedValue().toString(), searchTerms);
+                KVPair = search.showDocument(searchResults.getSelectedValue().toString());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
             searchResults.removeListSelectionListener(this);
-            if (doc != null) {
-                doc.forEach((text, wordData) -> {
-                    showDocument.setText(text);
-                    highlight(wordData);
-                });
+            if (KVPair != null) {
+                showDocument.setText(KVPair.getValue());
+                highlight(searchTerms, KVPair.getKey());
                 docScrollPanel.setBorder(BorderFactory.createEmptyBorder());
                 docPanel.setVisible(true);
                 this.setContentPane(docPanel);

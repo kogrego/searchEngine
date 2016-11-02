@@ -292,52 +292,46 @@ public class Search {
         return tokenize(words, parsedWords);
     }
 
-    public Map<String, Map<String,ArrayList<Integer>>> showDocument(String filename, ArrayList<String> searchWords) throws IOException {
-        Map<String, Map<String,ArrayList<Integer>>> returnDoc = new HashMap<>();
+    public AbstractMap.Entry<String, String> showDocument(String filename) throws IOException {
         String sCurrentLine;
         String doc = "";
+        String serial = "";
         filename = "./storage/" + filename;
         BufferedReader br = new BufferedReader(new FileReader(filename));
+        int i = 0;
         while ((sCurrentLine = br.readLine()) != null) {
+            if(i == 2){
+                serial = sCurrentLine.split(" ")[2];
+            }
             if(!sCurrentLine.startsWith("#")) {
                 doc += sCurrentLine;
                 doc += "\n";
             }
+            i++;
         }
-        String lowerDoc = doc.toLowerCase();
-        lowerDoc = lowerDoc.replaceAll("[\\-+\\^:,;?!.()/]", " ");
-        br.close();
-        Map<String, ArrayList<Integer>> wordData = new HashMap<>();
-        for(String word: searchWords){
-            int lastIndex = 0;
-            ArrayList<Integer> wordLoc = new ArrayList<>();
-            while (lastIndex != -1) {
-                lastIndex = lowerDoc.indexOf(word, lastIndex);
-                if (lastIndex != -1) {
-                    String sub = lowerDoc.substring(lastIndex);
-                    String[] parsedSub = sub.split(" ");
-                    if(parsedSub[0].equals(word)) {
-                        if (lastIndex == 0 || lowerDoc.charAt(lastIndex - 1) == ' ' || lowerDoc.charAt(lastIndex - 1) == '\n') {
-                            wordLoc.add(lastIndex);
-                        }
-                    }
-                    lastIndex += word.length();
-                }
-            }
-            wordData.put(word, wordLoc);
-        }
-        returnDoc.put(doc, wordData);
-        return returnDoc;
+        return new AbstractMap.SimpleEntry<>(serial, doc);
     }
 
     private ArrayList<String> brackets(String[] words, int i) {
         ArrayList<String> newWords = new ArrayList<>();
-        while (!words[i + 1].endsWith(")")) {
-            String temp = words[i + 1].replaceAll("[()]", "");
+        Stack<Character> bracket = new Stack<>();
+        bracket.push('(');
+        newWords.add(words[i+1].replace("(", ""));
+        i++;
+        while (bracket.size() > 0){
+            String temp = words[i+1];
+            if(temp.startsWith("(")){
+                bracket.push('(');
+            }
+            if(temp.endsWith(")")){
+                if(bracket.size() == 1){
+                    temp = temp.replace(")", "");
+                }
+                bracket.pop();
+            }
             newWords.add(temp);
             i++;
         }
-        newWords.add(words[i + 1].replaceAll("[()]", ""));
         return newWords;
     }
 }
