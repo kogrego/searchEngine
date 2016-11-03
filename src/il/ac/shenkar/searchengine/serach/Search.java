@@ -29,32 +29,18 @@ public class Search {
                         results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
                     }
                     if (words[i + 1].startsWith("(")) {
-                        ArrayList<String> newWords = brackets(words, i);
+                        ArrayList<String> newWords = brackets(words, i+1);
                         results.removeAll(tokenize(newWords.toArray(new String[newWords.size()]), parsedWords));
                         i+=(newWords.size()+1);
                     } else if (words[i + 1].startsWith("\"")) {
-                        String temp = "";
-                        while (!words[i + 1].endsWith("\"")) {
-                            temp += words[i + 1];
-                            temp += " ";
-                            i++;
-                        }
-                        temp += words[i + 1];
-                        temp = temp.toLowerCase();
-                        temp = temp.replaceAll("\"", "");
-                        parsedWords.add(temp);
-                        Map<String, ArrayList<Integer>> tempNot = indexMap.get(temp);
-                        if (tempNot != null) {
-                            tempNot.forEach((key, value)-> results.remove(key));
-                        }
-                        i++;
+                        tempWord = apostrophes(words, i+1);
+                        parsedWords.add(tempWord);
+                        results = getResults(results, tempWord, "NOT", notFlag);
+                        i+=(tempWord.split(" ").length + 1);
                     } else {
                         tempWord = words[i + 1].toLowerCase();
                         parsedWords.add(tempWord);
-                        Map<String, ArrayList<Integer>> tempNot = indexMap.get(tempWord);
-                        if (tempNot != null) {
-                            tempNot.forEach((key, value)-> results.remove(key));
-                        }
+                        results = getResults(results, tempWord, "NOT", notFlag);
                         i += 2;
                     }
                     break;
@@ -64,10 +50,9 @@ public class Search {
                         notFlag = true;
                     }
                     if (words[i + 1].startsWith("(")) {
-                        ArrayList<String> newWords = brackets(words, i);
+                        ArrayList<String> newWords = brackets(words, i+1);
                         if(notFlag){
                             newWords = deMorgan(newWords);
-                            notFlag = false;
                         }
                         ArrayList<String> list = new ArrayList<>();
                         ArrayList<String> tempList = tokenize(newWords.toArray(new String[newWords.size()]), parsedWords);
@@ -75,59 +60,22 @@ public class Search {
                         results.addAll(list);
                         i+=(newWords.size()+1);
                     } else if (words[i + 1].startsWith("\"")) {
-                        String temp = "";
-                        while (!words[i + 1].endsWith("\"")) {
-                            temp += words[i + 1];
-                            temp += " ";
-                            i++;
+                        tempWord = apostrophes(words, i+1);
+                        if(!notFlag) {
+                            parsedWords.add(tempWord);
                         }
-                        temp += words[i + 1];
-                        temp = temp.toLowerCase();
-                        temp = temp.replaceAll("\"", "");
-                        parsedWords.add(temp);
-                        Map<String, ArrayList<Integer>> tempAnd = indexMap.get(temp);
-                        if (tempAnd != null) {
-                            if(notFlag) {
-                                ArrayList<String> tempResults = new ArrayList<>();
-                                tempResults.addAll(new ArrayList<>(Utils.getStorageFileNames()));
-                                tempAnd.forEach((key, value) -> results.remove(key));
-                                notFlag = false;
-                                ArrayList<String> list = tempResults.stream().filter(results::contains).collect(Collectors.toCollection(ArrayList::new));
-                                results.clear();
-                                results.addAll(list);
-                                i++;
-                                break;
-                            }
-                            ArrayList<String> list = results.stream().filter(s -> tempAnd.keySet().contains(s)).collect(Collectors.toCollection(ArrayList::new));
-                            results.clear();
-                            results.addAll(list);
-                        } else {
-                            results.clear();
-                        }
-                        i++;
+                        results = getResults(results, tempWord, "AND", notFlag);
+                        i+=(tempWord.split(" ").length + 1);
                     } else {
                         tempWord = words[i + 1].toLowerCase();
-                        parsedWords.add(tempWord);
-                        Map<String, ArrayList<Integer>> tempAnd = indexMap.get(tempWord);
-                        if (tempAnd != null) {
-                            if(notFlag) {
-                                ArrayList<String> tempResults = new ArrayList<>();
-                                tempResults.addAll(new ArrayList<>(Utils.getStorageFileNames()));
-                                tempAnd.forEach((key, value) -> tempResults.remove(key));
-                                notFlag = false;
-                                ArrayList<String> list = tempResults.stream().filter(results::contains).collect(Collectors.toCollection(ArrayList::new));
-                                results.clear();
-                                results.addAll(list);
-                                i += 2;
-                                break;
-                            }
-                            ArrayList<String> list = results.stream().filter(s -> tempAnd.keySet().contains(s)).collect(Collectors.toCollection(ArrayList::new));
-                            results.clear();
-                            results.addAll(list);
-                        } else {
-                            results.clear();
+                        if(!notFlag) {
+                            parsedWords.add(tempWord);
                         }
+                        results = getResults(results, tempWord, "AND", notFlag);
                         i += 2;
+                    }
+                    if(notFlag) {
+                        notFlag = false;
                     }
                     break;
                 case "OR":
@@ -136,7 +84,7 @@ public class Search {
                         notFlag = true;
                     }
                     if (words[i + 1].startsWith("(")) {
-                        ArrayList<String> newWords = brackets(words, i);
+                        ArrayList<String> newWords = brackets(words, i+1);
                         if(notFlag){
                             newWords = deMorgan(newWords);
                             notFlag = false;
@@ -148,113 +96,52 @@ public class Search {
                         results.addAll(set);
                         i+=(newWords.size()+1);
                     } else if (words[i + 1].startsWith("\"")) {
-                        String temp = "";
-                        while (!words[i + 1].endsWith("\"")) {
-                            temp += words[i + 1];
-                            temp += " ";
-                            i++;
+                        tempWord = apostrophes(words, i+1);
+                        if(!notFlag) {
+                            parsedWords.add(tempWord);
                         }
-                        temp += words[i + 1];
-                        temp = temp.toLowerCase();
-                        temp = temp.replaceAll("\"", "");
-                        parsedWords.add(temp);
-                        Map<String, ArrayList<Integer>> tempOr = indexMap.get(temp);
-                        if (tempOr != null) {
-                            if(notFlag) {
-                                tempOr.forEach((key, value) -> results.remove(key));
-                                notFlag = false;
-                            }
-                            Set<String> set = new HashSet<>();
-                            set.addAll(results);
-                            tempOr.forEach((key,value)-> set.add(key));
-                            results.addAll(set);
-                        } else {
-                            results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
-                        }
-                        i++;
+                        results = getResults(results, tempWord, "OR", notFlag);
+                        i+=(tempWord.split(" ").length + 1);
                     } else {
                         tempWord = words[i + 1].toLowerCase();
-                        parsedWords.add(tempWord);
-                        Map<String, ArrayList<Integer>> tempOr = indexMap.get(tempWord);
-                        if (tempOr != null) {
-                            if(notFlag) {
-                                tempOr.forEach((key, value) -> results.remove(key));
-                                notFlag = false;
-                            }
-                            Set<String> set = new HashSet<>();
-                            set.addAll(results);
-                            tempOr.forEach((key,value)-> set.add(key));
-                            results.addAll(set);
-                        } else {
-                            results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
+                        if(!notFlag) {
+                            parsedWords.add(tempWord);
                         }
+                        results = getResults(results, tempWord, "OR", notFlag);
                         i += 2;
+                    }
+                    if(notFlag){
+                        notFlag = false;
                     }
                     break;
                 default:
                     if (words[i].startsWith("(")) {
                         ArrayList<String> newWords = brackets(words, i);
-                        if(notFlag){
-                            newWords = deMorgan(newWords);
-                            notFlag = false;
-                        }
                         ArrayList<String> tempList = tokenize(newWords.toArray(new String[newWords.size()]), parsedWords);
                         Set<String> set = new HashSet<>();
                         set.addAll(tempList);
                         set.addAll(results);
                         results.addAll(set);
-                        i+=(newWords.size()+1);
+                        i+=newWords.size();
                     } else if (words[i].startsWith("\"")) {
-                        String temp = "";
-                        while (!words[i].endsWith("\"")) {
-                            temp += words[i];
-                            temp += " ";
-                            i++;
-                        }
-                        temp += words[i];
-                        temp = temp.toLowerCase();
-                        temp = temp.replaceAll("\"", "");
-                        parsedWords.add(temp);
-                        Map<String, ArrayList<Integer>> tempDefault = indexMap.get(temp);
-                        if (tempDefault != null) {
-                            if(notFlag) {
-                                tempDefault.forEach((key, value) -> results.remove(key));
-                                notFlag = false;
-                            }
-                            Set<String> set = new HashSet<>();
-                            set.addAll(results);
-                            tempDefault.forEach((key,value)-> set.add(key));
-                            results.addAll(set);
-                        } else {
-                            results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
-                        }
-                        i++;
+                        tempWord = apostrophes(words, i);
+                        parsedWords.add(tempWord);
+                        results = getResults(results, tempWord, "OR", false);
+                        i+=tempWord.split(" ").length;
                     } else {
                         tempWord = words[i].toLowerCase();
                         parsedWords.add(tempWord);
-                        Map<String, ArrayList<Integer>> tempDefault = indexMap.get(tempWord);
-                        if (tempDefault != null) {
-                            if(notFlag) {
-                                tempDefault.forEach((key, value) -> results.remove(key));
-                                notFlag = false;
-                            }
-                            Set<String> set = new HashSet<>();
-                            set.addAll(results);
-                            tempDefault.forEach((key,value)-> set.add(key));
-                            results.addAll(set);
-                        } else {
-                            results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
-                        }
+                        results = getResults(results, tempWord, "OR", false);
                         i++;
                     }
                     break;
             }
         }
-        results.forEach((key)->{
-            if(Utils.getPostingMap().get(key).isHidden()){
-                results.remove(key);
+        for(String result: results){
+            if(Utils.getPostingMap().get(result).isHidden()){
+                results.remove(result);
             }
-        });
+        }
         return new ArrayList<>(results);
     }
 
@@ -316,10 +203,10 @@ public class Search {
         ArrayList<String> newWords = new ArrayList<>();
         Stack<Character> bracket = new Stack<>();
         bracket.push('(');
-        newWords.add(words[i+1].replace("(", ""));
+        newWords.add(words[i].replace("(", ""));
         i++;
         while (bracket.size() > 0){
-            String temp = words[i+1];
+            String temp = words[i];
             if(temp.startsWith("(")){
                 bracket.push('(');
             }
@@ -333,5 +220,75 @@ public class Search {
             i++;
         }
         return newWords;
+    }
+
+    private String apostrophes(String[] words, int i){
+        String temp = "";
+        while (!words[i].endsWith("\"")) {
+            temp += words[i];
+            temp += " ";
+            i++;
+        }
+        temp += words[i];
+        temp = temp.toLowerCase();
+        temp = temp.replaceAll("\"", "");
+        return temp;
+    }
+
+    private Set<String> getResults(Set<String> results, String searchTerm, String op, boolean notFlag){
+        Map<String, ArrayList<Integer>> map = indexMap.get(searchTerm);
+        switch(op){
+            case "NOT":
+                if (map != null) {
+                    Set<String> finalResults = results;
+                    map.forEach((key, value)-> finalResults.remove(key));
+                    results = finalResults;
+                }
+                break;
+            case "AND":
+                if (map != null) {
+                    if(notFlag) {
+                        ArrayList<String> tempResults = new ArrayList<>();
+                        tempResults.addAll(new ArrayList<>(Utils.getStorageFileNames()));
+                        Set<String> finalResults = results;
+                        map.forEach((key, value) -> finalResults.remove(key));
+                        results = finalResults;
+                        ArrayList<String> list = tempResults.stream().filter(results::contains).collect(Collectors.toCollection(ArrayList::new));
+                        results.clear();
+                        results.addAll(list);
+                        break;
+                    }
+                    ArrayList<String> list = results.stream().filter(s -> map.keySet().contains(s)).collect(Collectors.toCollection(ArrayList::new));
+                    results.clear();
+                    results.addAll(list);
+                } else {
+                    results.clear();
+                }
+                break;
+            case "OR":
+                results = defaultOp(map, notFlag, results);
+                break;
+            default:
+                results = defaultOp(map, notFlag, results);
+                break;
+        }
+        return results;
+    }
+
+    private Set<String> defaultOp(Map<String, ArrayList<Integer>> map, boolean notFlag, Set<String> results) {
+        if (map != null) {
+            if (notFlag) {
+                Set<String> tempResults = Utils.getPostingMap().keySet();
+                ArrayList<String> temp = new ArrayList<>(tempResults);
+                map.forEach((key, value) -> temp.remove(key));
+                results.addAll(temp);
+            } else {
+                results.addAll(map.keySet());
+            }
+
+        } else {
+            results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
+        }
+        return results;
     }
 }
