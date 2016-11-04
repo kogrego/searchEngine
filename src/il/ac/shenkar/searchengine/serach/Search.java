@@ -231,6 +231,11 @@ public class Search {
             temp += " ";
             i++;
         }
+        if (temp.equals("")) {
+            temp += words[i];
+            temp = temp.toLowerCase();
+            return temp;
+        }
         temp += words[i];
         temp = temp.toLowerCase();
         temp = temp.replaceAll("\"", "");
@@ -290,7 +295,9 @@ public class Search {
                 results.addAll(temp);
             }
         } else {
-            results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
+            if (notFlag) {
+                results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
+            }
         }
         return results;
     }

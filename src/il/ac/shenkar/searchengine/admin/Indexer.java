@@ -11,11 +11,11 @@ import java.util.*;
 public class Indexer {
 
     private Map<String, Hits> indexMap;
-    private Map<String, Doc> postingMap;
+    private Map<String, Doc> docsMap;
 
     public Indexer(){
         indexMap = Utils.getMap();
-        postingMap = Utils.getDocsMap();
+        docsMap = Utils.getDocsMap();
     }
 
     public void index(File toAdd, Doc doc) throws IOException {
@@ -37,17 +37,21 @@ public class Indexer {
             parsedLine = parsedLine.replace("  ", " ");
             Collections.addAll(words, parsedLine.split(" "));
         }
-        ArrayList<String> goodWords = blackList(words);
-        ArrayList<String> uniqueWords = removeDup(goodWords);
 
-        for(String word: uniqueWords){
+        ArrayList<String> uniqueWords = removeDup(words);
+        ArrayList<String> goodWords = Utils.blackList(uniqueWords);
+
+        for(String word: goodWords){
             int lastIndex = 0;
             while (lastIndex != -1) {
-                lastIndex = text.indexOf(word, lastIndex);
+                String tempWord = word;
+                if(tempWord.split(" ").length == 1) {
+                    tempWord = word.replaceAll("\"", "");
+                }
+                lastIndex = text.indexOf(tempWord, lastIndex);
                 if (lastIndex != -1) {
-                    String sub = text.substring(lastIndex);
-                    String[] parsedSub = sub.split(" ");
-                    if(parsedSub[0].equals(word)) {
+                    String toIndex = text.substring(lastIndex, lastIndex + tempWord.length());
+                    if(toIndex.equals(tempWord)) {
                         if (lastIndex == 0 || text.charAt(lastIndex - 1) == ' ' || text.charAt(lastIndex - 1) == '\n') {
                             if(indexMap.containsKey(word)) {
                                 Hits hit = indexMap.get(word);
@@ -102,13 +106,6 @@ public class Indexer {
         firstHit.setPostings(postingObj);
         firstHit.setNumOfPostings(1);
         indexMap.put(word, firstHit);
-    }
-
-    ArrayList<String> blackList(ArrayList<String> words) {
-        ArrayList<String> goodWords = new ArrayList<>(words);
-        List<String> blacklist =  Arrays.asList(Utils.getBlackList());
-        goodWords.removeAll(blacklist);
-        return goodWords;
     }
 
     ArrayList<String> removeDup(ArrayList<String> words){

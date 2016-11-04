@@ -4,14 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.*;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class Utils {
     private static final String[] blackList = {"on", "in", "to", "a", "an", "the", "i", "is", "it", "as",
-            "was", "so", "his", "has", ""};
+            "was", "so", "his", "has", "of", ""};
     private static File index;
     private static File docs;
     private static Map<String, Hits> map;
@@ -120,6 +117,21 @@ public class Utils {
         Type mapType = new TypeToken<Map<String, Doc>>() {
         }.getType();
         docsMap = gson.fromJson(mapJson, mapType);
+    }
+
+    public static ArrayList<String> blackList(ArrayList<String> words) {
+        ArrayList<String> goodWords = new ArrayList<>(words);
+        List<String> blacklist =  Arrays.asList(Utils.getBlackList());
+        for(String word : words){
+            if (blacklist.contains(word)){
+                goodWords.remove(word);
+                if(!Objects.equals(word, "")) {
+                    String newWord = '"' + word + '"';
+                    goodWords.add(newWord);
+                }
+            }
+        }
+        return goodWords;
     }
 
 }

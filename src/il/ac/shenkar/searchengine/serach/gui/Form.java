@@ -121,16 +121,17 @@ public class Form extends JFrame implements ListSelectionListener {
 
     private void highlight(ArrayList<String> words, String index) {
         Highlighter highlighter = showDocument.getHighlighter();
-        Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.pink);
+        Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.yellow);
         words.forEach((word)->{
             Hits hit =  Utils.getMap().get(word);
+            String tempWord = word.replaceAll("\"", "");
             if(hit != null) {
                 Posting posting = hit.getPostings().get(index);
                 if (posting != null) {
                     ArrayList<Integer> locations = posting.getOccurences();
                     locations.forEach((location) -> {
                         try {
-                            highlighter.addHighlight(location, location + word.length(), painter);
+                            highlighter.addHighlight(location, location + tempWord.length(), painter);
                         } catch (BadLocationException e1) {
                             e1.printStackTrace();
                         }
