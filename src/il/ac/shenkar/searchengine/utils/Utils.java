@@ -14,7 +14,7 @@ public class Utils {
             "was", "so", "his", "has", ""};
     private static File index;
     private static File posting;
-    private static Map<String, Map<String, ArrayList<Integer>>> map;
+    private static Map<String, Hits> map;
     private static Map<String, Doc> postingMap;
     private static final String INDEX = "./index.txt";
     private static final String POSTING = "./posting.txt";
@@ -35,7 +35,7 @@ public class Utils {
         }
     }
 
-    public static Map<String, Map<String, ArrayList<Integer>>> getMap() {
+    public static Map<String, Hits> getMap() {
         if (map == null) {
             map = new HashMap<>();
         }
@@ -94,8 +94,7 @@ public class Utils {
                 mapJson = new Scanner(indexFile).useDelimiter("\\Z").next();
             }
         }
-        Type mapType = new TypeToken<Map<String, Map<String, ArrayList<Integer>>>>() {
-        }.getType();
+        Type mapType = new TypeToken<Map<String, Hits>>(){}.getType();
         map = gson.fromJson(mapJson, mapType);
     }
 

@@ -1,5 +1,7 @@
 package il.ac.shenkar.searchengine.serach;
 
+import il.ac.shenkar.searchengine.utils.Hits;
+import il.ac.shenkar.searchengine.utils.Posting;
 import il.ac.shenkar.searchengine.utils.Utils;
 
 import java.io.*;
@@ -8,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class Search {
 
-    private Map<String, Map<String, ArrayList<Integer>>> indexMap;
+    private Map<String, Hits> indexMap;
 
     public Search() {
         this.indexMap = Utils.getMap();
@@ -236,12 +238,12 @@ public class Search {
     }
 
     private Set<String> getResults(Set<String> results, String searchTerm, String op, boolean notFlag){
-        Map<String, ArrayList<Integer>> map = indexMap.get(searchTerm);
+        Hits map = indexMap.get(searchTerm);
         switch(op){
             case "NOT":
                 if (map != null) {
                     Set<String> finalResults = results;
-                    map.forEach((key, value)-> finalResults.remove(key));
+                    map.getPostings().forEach((key, value)-> finalResults.remove(key));
                     results = finalResults;
                 }
                 break;
@@ -251,14 +253,14 @@ public class Search {
                         ArrayList<String> tempResults = new ArrayList<>();
                         tempResults.addAll(new ArrayList<>(Utils.getStorageFileNames()));
                         Set<String> finalResults = results;
-                        map.forEach((key, value) -> finalResults.remove(key));
+                        map.getPostings().forEach((key, value) -> finalResults.remove(key));
                         results = finalResults;
                         ArrayList<String> list = tempResults.stream().filter(results::contains).collect(Collectors.toCollection(ArrayList::new));
                         results.clear();
                         results.addAll(list);
                         break;
                     }
-                    ArrayList<String> list = results.stream().filter(s -> map.keySet().contains(s)).collect(Collectors.toCollection(ArrayList::new));
+                    ArrayList<String> list = results.stream().filter(s -> map.getPostings().keySet().contains(s)).collect(Collectors.toCollection(ArrayList::new));
                     results.clear();
                     results.addAll(list);
                 } else {
@@ -275,17 +277,18 @@ public class Search {
         return results;
     }
 
-    private Set<String> defaultOp(Map<String, ArrayList<Integer>> map, boolean notFlag, Set<String> results) {
+    private Set<String> defaultOp(Hits map, boolean notFlag, Set<String> results) {
         if (map != null) {
             if (notFlag) {
                 Set<String> tempResults = Utils.getPostingMap().keySet();
                 ArrayList<String> temp = new ArrayList<>(tempResults);
-                map.forEach((key, value) -> temp.remove(key));
+                map.getPostings().forEach((key, value) -> temp.remove(key));
                 results.addAll(temp);
             } else {
-                results.addAll(map.keySet());
+                Set<String> tempResults = Utils.getPostingMap().keySet();
+                ArrayList<String> temp = new ArrayList<>(tempResults);
+                results.addAll(temp);
             }
-
         } else {
             results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
         }

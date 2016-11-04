@@ -15,6 +15,8 @@ import java.util.ArrayList;
 
 import il.ac.shenkar.searchengine.serach.Search;
 import il.ac.shenkar.searchengine.utils.Doc;
+import il.ac.shenkar.searchengine.utils.Hits;
+import il.ac.shenkar.searchengine.utils.Posting;
 import il.ac.shenkar.searchengine.utils.Utils;
 
 public class Form extends JFrame implements ListSelectionListener {
@@ -121,14 +123,20 @@ public class Form extends JFrame implements ListSelectionListener {
         Highlighter highlighter = showDocument.getHighlighter();
         Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.pink);
         words.forEach((word)->{
-            ArrayList<Integer> locations = Utils.getMap().get(word).get(index);
-            locations.forEach((location) -> {
-                try {
-                    highlighter.addHighlight(location, location + word.length(), painter);
-                } catch (BadLocationException e1) {
-                    e1.printStackTrace();
+            Hits hit =  Utils.getMap().get(word);
+            if(hit != null) {
+                Posting posting = hit.getPostings().get(index);
+                if (posting != null) {
+                    ArrayList<Integer> locations = posting.getOccurences();
+                    locations.forEach((location) -> {
+                        try {
+                            highlighter.addHighlight(location, location + word.length(), painter);
+                        } catch (BadLocationException e1) {
+                            e1.printStackTrace();
+                        }
+                    });
                 }
-            });
+            }
         });
     }
 
