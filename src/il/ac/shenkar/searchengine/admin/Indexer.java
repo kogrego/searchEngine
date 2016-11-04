@@ -15,7 +15,7 @@ public class Indexer {
 
     public Indexer(){
         indexMap = Utils.getMap();
-        postingMap = Utils.getPostingMap();
+        postingMap = Utils.getDocsMap();
     }
 
     public void index(File toAdd, Doc doc) throws IOException {

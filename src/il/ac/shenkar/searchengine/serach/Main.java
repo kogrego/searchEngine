@@ -7,10 +7,10 @@ import il.ac.shenkar.searchengine.utils.Utils;
 public class Main {
     public static void main(String[] args) {
         Utils.getIndex();
-        Utils.getPosting();
+        Utils.getDocuments();
         try {
             Utils.getMapFromFile();
-            Utils.getPostingFromFile();
+            Utils.getDocsFromFile();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

@@ -44,7 +44,7 @@ public class Admin extends JFrame{
                         File storedFile = Utils.storeFile(file, doc);
                         indexer.index(storedFile, doc);
                         Utils.saveMapToFile();
-                        Utils.savePostingToFile();
+                        Utils.saveDocsToFile();
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
@@ -60,7 +60,7 @@ public class Admin extends JFrame{
             fileChooser.setDialogTitle("Search Engine - hide");
             fileChooser.showOpenDialog(hideButton);
             File[] files = fileChooser.getSelectedFiles();
-            Map<String, Doc> posting = Utils.getPostingMap();
+            Map<String, Doc> posting = Utils.getDocsMap();
             final String[] text = {""};
             posting.forEach((key, doc)->{
                 for(File file: files){
@@ -72,7 +72,7 @@ public class Admin extends JFrame{
             });
             resultLabel.setText(text[0]);
             try {
-                Utils.savePostingToFile();
+                Utils.saveDocsToFile();
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -83,7 +83,7 @@ public class Admin extends JFrame{
             fileChooser.setDialogTitle("Search Engine - show");
             fileChooser.showOpenDialog(showButton);
             File[] files = fileChooser.getSelectedFiles();
-            Map<String, Doc> posting = Utils.getPostingMap();
+            Map<String, Doc> posting = Utils.getDocsMap();
             final String[] text = {""};
             posting.forEach((key, doc)->{
                 for(File file: files){
@@ -95,7 +95,7 @@ public class Admin extends JFrame{
             });
             resultLabel.setText(text[0]);
             try {
-                Utils.savePostingToFile();
+                Utils.saveDocsToFile();
             } catch (IOException e1) {
                 e1.printStackTrace();
             }

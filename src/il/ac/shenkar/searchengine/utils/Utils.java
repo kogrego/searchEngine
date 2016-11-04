@@ -13,11 +13,11 @@ public class Utils {
     private static final String[] blackList = {"on", "in", "to", "a", "an", "the", "i", "is", "it", "as",
             "was", "so", "his", "has", ""};
     private static File index;
-    private static File posting;
+    private static File docs;
     private static Map<String, Hits> map;
-    private static Map<String, Doc> postingMap;
+    private static Map<String, Doc> docsMap;
     private static final String INDEX = "./index.txt";
-    private static final String POSTING = "./posting.txt";
+    private static final String DOCUMENTS = "./documents.txt";
 
     public static String[] getBlackList() {
         return blackList;
@@ -29,9 +29,9 @@ public class Utils {
         }
     }
 
-    public static void getPosting() {
-        if (posting == null) {
-            posting = new File(POSTING);
+    public static void getDocuments() {
+        if (docs == null) {
+            docs = new File(DOCUMENTS);
         }
     }
 
@@ -42,24 +42,24 @@ public class Utils {
         return map;
     }
 
-    public static Map<String, Doc> getPostingMap() {
-        if (postingMap == null) {
-            postingMap = new HashMap<>();
+    public static Map<String, Doc> getDocsMap() {
+        if (docsMap == null) {
+            docsMap = new HashMap<>();
         }
-        return postingMap;
+        return docsMap;
     }
 
 
     public static ArrayList<String> getStorageFileNames() {
-        return new ArrayList<>(postingMap.keySet());
+        return new ArrayList<>(docsMap.keySet());
     }
 
     public static File storeFile(File src, Doc doc) throws IOException {
         doc.setSerial();
-        if (postingMap == null) {
-            postingMap = new HashMap<>();
+        if (docsMap == null) {
+            docsMap = new HashMap<>();
         }
-        postingMap.put(doc.getSerial(), doc);
+        docsMap.put(doc.getSerial(), doc);
         File dest = new File("./storage/" + doc.getFileName());
         InputStream is = new FileInputStream(src);
         OutputStream os = new FileOutputStream(dest);
@@ -98,28 +98,28 @@ public class Utils {
         map = gson.fromJson(mapJson, mapType);
     }
 
-    public static void savePostingToFile() throws IOException {
+    public static void saveDocsToFile() throws IOException {
         Gson gson = new Gson();
-        String mapString = gson.toJson(postingMap);
-        BufferedWriter indexOut = new BufferedWriter(new FileWriter(POSTING));
+        String mapString = gson.toJson(docsMap);
+        BufferedWriter indexOut = new BufferedWriter(new FileWriter(DOCUMENTS));
         indexOut.write(mapString);
         indexOut.close();
     }
 
-    public static void getPostingFromFile() throws IOException, ClassNotFoundException {
+    public static void getDocsFromFile() throws IOException, ClassNotFoundException {
         String mapJson = null;
         Gson gson = new Gson();
-        if (posting.exists()) {
-            mapJson = new Scanner(posting).useDelimiter("\\Z").next();
+        if (docs.exists()) {
+            mapJson = new Scanner(docs).useDelimiter("\\Z").next();
         } else {
-            File postingFile = new File(POSTING);
+            File postingFile = new File(DOCUMENTS);
             if(postingFile.exists()) {
                 mapJson = new Scanner(postingFile).useDelimiter("\\Z").next();
             }
         }
         Type mapType = new TypeToken<Map<String, Doc>>() {
         }.getType();
-        postingMap = gson.fromJson(mapJson, mapType);
+        docsMap = gson.fromJson(mapJson, mapType);
     }
 
 }

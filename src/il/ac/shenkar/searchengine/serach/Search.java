@@ -140,7 +140,7 @@ public class Search {
             }
         }
         for(String result: results){
-            if(Utils.getPostingMap().get(result).isHidden()){
+            if(Utils.getDocsMap().get(result).isHidden()){
                 results.remove(result);
             }
         }
@@ -280,12 +280,12 @@ public class Search {
     private Set<String> defaultOp(Hits map, boolean notFlag, Set<String> results) {
         if (map != null) {
             if (notFlag) {
-                Set<String> tempResults = Utils.getPostingMap().keySet();
+                Set<String> tempResults = Utils.getDocsMap().keySet();
                 ArrayList<String> temp = new ArrayList<>(tempResults);
                 map.getPostings().forEach((key, value) -> temp.remove(key));
                 results.addAll(temp);
             } else {
-                Set<String> tempResults = Utils.getPostingMap().keySet();
+                Set<String> tempResults = map.getPostings().keySet();
                 ArrayList<String> temp = new ArrayList<>(tempResults);
                 results.addAll(temp);
             }

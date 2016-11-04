@@ -106,7 +106,7 @@ public class Form extends JFrame implements ListSelectionListener {
         resultsLabel.setText("Search Results:\n");
         DefaultListModel listModel = new DefaultListModel();
         results.forEach((result)-> {
-            Doc doc = Utils.getPostingMap().get(result);
+            Doc doc = Utils.getDocsMap().get(result);
             listModel.addElement(doc.getFileName());
         });
         searchResults.setModel(listModel);
