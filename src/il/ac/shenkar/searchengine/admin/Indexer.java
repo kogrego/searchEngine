@@ -123,6 +123,7 @@ public class Indexer {
                 if (i < 4) {
                     if (i == 0) {
                         title += line;
+                        text += line;
                         line = sc.nextLine();
                     } else {
                         preview += line + '\n';

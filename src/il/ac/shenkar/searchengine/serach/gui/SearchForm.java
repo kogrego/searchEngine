@@ -111,10 +111,53 @@ public class SearchForm extends JFrame implements ListSelectionListener {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setLocationRelativeTo(null);
 
+        createMenuBar();
         resultsScrollPanel.setBorder(BorderFactory.createEmptyBorder());
 
         setContentPane(rootPanel);
         setVisible(true);
+    }
+
+    private void createMenuBar() {
+
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu menu = new JMenu("Help");
+        menu.setMnemonic(KeyEvent.VK_F);
+
+        JMenuItem helpItem = new JMenuItem("Help");
+        JMenuItem aboutItem = new JMenuItem("About");
+        helpItem.setMnemonic(KeyEvent.VK_E);
+        aboutItem.setMnemonic(KeyEvent.VK_E);
+
+        helpItem.setToolTipText("Hoe to use Search Engine");
+        helpItem.addActionListener((ActionEvent event) -> {
+            JFrame helpFrame = new JFrame("Help");
+            helpFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            helpFrame.setSize(640, 480);
+            helpFrame.setBackground(Color.white);
+            helpFrame.setLocationRelativeTo(null);
+            helpFrame.setVisible(true);
+        });
+
+        aboutItem.addActionListener((ActionEvent event) -> {
+            JFrame aboutFrame = new JFrame("About");
+            JTextArea textArea = new JTextArea("Created by Dassi Rosen and Gregory K\n Released November 2016");
+            textArea.setEditable(false);
+            textArea.setMargin(new Insets(30, 30, 30, 30));
+            aboutFrame.add(textArea, BorderLayout.CENTER);
+            aboutFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            aboutFrame.setSize(480, 320);
+            aboutFrame.setBackground(Color.white);
+            aboutFrame.setLocationRelativeTo(null);
+            aboutFrame.setVisible(true);
+        });
+
+        menu.add(aboutItem);
+        menu.add(helpItem);
+        menuBar.add(menu);
+
+        setJMenuBar(menuBar);
     }
 
     private void showResults(ArrayList<String> results) {
@@ -150,7 +193,7 @@ public class SearchForm extends JFrame implements ListSelectionListener {
                     ArrayList<Integer> locations = posting.getHits();
                     locations.forEach((location) -> {
                         try {
-                            highlighter.addHighlight(location, location + tempWord.length(), painter);
+                            highlighter.addHighlight(location, location + tempWord.length() + 1, painter);
                         } catch (BadLocationException e1) {
                             e1.printStackTrace();
                         }
