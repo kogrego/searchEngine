@@ -24,7 +24,7 @@ public class Search {
             switch (words[i]) {
                 case "NOT":
                     if (results.size() >= 0) {
-                        results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
+                        results.addAll(new ArrayList<>(Utils.getDocsMap().keySet()));
                     }
                     if (words[i + 1].startsWith("(")) {
                         ArrayList<String> newWords = brackets(words, i + 1);
@@ -32,13 +32,11 @@ public class Search {
                         i += (newWords.size() + 1);
                     } else if (words[i + 1].startsWith("\"")) {
                         tempWord = apostrophes(words, i + 1);
-                        parsedWords.add(tempWord);
-                        results = getResults(results, tempWord, "NOT", notFlag);
+                        results = getResults(results, tempWord, "NOT", false);
                         i += (tempWord.split(" ").length + 1);
                     } else {
                         tempWord = words[i + 1].toLowerCase();
-                        parsedWords.add(tempWord);
-                        results = getResults(results, tempWord, "NOT", notFlag);
+                        results = getResults(results, tempWord, "NOT", false);
                         i += 2;
                     }
                     break;
@@ -54,7 +52,8 @@ public class Search {
                         }
                         ArrayList<String> list = new ArrayList<>();
                         ArrayList<String> tempList = tokenize(newWords.toArray(new String[newWords.size()]), parsedWords);
-                        list.addAll(tempList.stream().filter(tempList::contains).collect(Collectors.toList()));
+                        list.addAll(tempList.stream().filter(results::contains).collect(Collectors.toList()));
+                        results.clear();
                         results.addAll(list);
                         i += (newWords.size() + 1);
                     } else if (words[i + 1].startsWith("\"")) {
@@ -135,12 +134,16 @@ public class Search {
                     break;
             }
         }
+        ArrayList<String> removedResults = new ArrayList<>(results);
         for (String result : results) {
-            if (Utils.getDocsMap().get(result).isHidden()) {
-                results.remove(result);
+            Doc doc = Utils.getDocsMap().get(result);
+            if(doc != null) {
+                if (doc.isHidden()) {
+                    removedResults.remove(result);
+                }
             }
         }
-        return new ArrayList<>(results);
+        return new ArrayList<>(removedResults);
     }
 
     private ArrayList<String> brackets(String[] words, int i) {
