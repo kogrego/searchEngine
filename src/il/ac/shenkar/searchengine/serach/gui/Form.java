@@ -1,11 +1,10 @@
 package il.ac.shenkar.searchengine.serach.gui;
 
+import javax.naming.directory.SearchResult;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Highlighter;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.print.PrinterException;
@@ -81,7 +80,7 @@ public class Form extends JFrame implements ListSelectionListener {
             }
         });
 
-        printButton.addActionListener(e-> {
+        printButton.addActionListener(e -> {
             try {
                 showDocument.print();
             } catch (PrinterException e1) {
@@ -89,7 +88,25 @@ public class Form extends JFrame implements ListSelectionListener {
             }
         });
 
+        searchResults.addMouseMotionListener(new MouseMotionListener() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                final int x = e.getX();
+                final int y = e.getY();
+                final Rectangle cellBounds = searchResults.getCellBounds(0, searchResults.getModel().getSize() - 1);
+                if (cellBounds != null && cellBounds.contains(x, y)) {
+                    searchResults.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                } else {
+                    searchResults.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
+            }
+        });
     }
+
 
     private void initComponents() {
         this.setSize(1024, 720);
@@ -103,11 +120,14 @@ public class Form extends JFrame implements ListSelectionListener {
     }
 
     private void showResults(ArrayList<String> results) {
-        resultsLabel.setText("Search Results:\n");
+        resultsLabel.setText(results.size() + " search result(s):");
+        resultsLabel.setForeground(new Color(38,187,171));
         DefaultListModel listModel = new DefaultListModel();
+        ListCellRenderer renderer = new ListItemRenderer();
+        searchResults.setCellRenderer(renderer);
         results.forEach((result)-> {
             Doc doc = Utils.getDocsMap().get(result);
-            listModel.addElement(doc.getFileName());
+            listModel.addElement(doc);
         });
         searchResults.setModel(listModel);
         searchResults.addListSelectionListener(this);
@@ -115,6 +135,7 @@ public class Form extends JFrame implements ListSelectionListener {
 
     private void noResults() {
         searchResults.setModel(new DefaultListModel());
+        resultsLabel.setForeground(new Color(187,117,125));
         resultsLabel.setText("no results");
         searchResults.removeListSelectionListener(this);
     }
@@ -144,20 +165,50 @@ public class Form extends JFrame implements ListSelectionListener {
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (!e.getValueIsAdjusting()) {
-            AbstractMap.Entry<String, String> KVPair = null;
+            Doc doc = (Doc) searchResults.getSelectedValue();
             try {
-                KVPair = search.showDocument(searchResults.getSelectedValue().toString());
+                search.showDocument(doc);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
             searchResults.removeListSelectionListener(this);
-            if (KVPair != null) {
-                showDocument.setText(KVPair.getValue());
-                highlight(searchTerms, KVPair.getKey());
+            if (doc != null) {
+                showDocument.setText(doc.getContent());
+                highlight(searchTerms,doc.getSerial());
                 docScrollPanel.setBorder(BorderFactory.createEmptyBorder());
                 docPanel.setVisible(true);
                 this.setContentPane(docPanel);
             }
         }
+    }
+
+    private class ListItemRenderer extends JPanel implements ListCellRenderer {
+
+        public Component getListCellRendererComponent(JList list, Object value, int index,
+                                                      boolean isSelected, boolean cellHasFocus) {
+            JTextPane renderer = new JTextPane();
+            renderer.setFont(new Font("sans-serif", Font.PLAIN, 18));
+            String fileName = ((Doc) value).getFileName();
+            String preview = ((Doc) value).getPreview();
+            appendToPane(renderer, "\n" + fileName + "\n\n", Color.blue, true);
+            appendToPane(renderer, preview + "\n", Color.black, false);
+            return renderer;
+        }
+    }
+
+    private void appendToPane(JTextPane textPane, String msg, Color color, boolean shouldUnderline)
+    {
+        StyleContext sc = StyleContext.getDefaultStyleContext();
+        AttributeSet attr = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, color);
+
+        if(shouldUnderline) {
+            attr = sc.addAttribute(attr, StyleConstants.Underline, true);
+        }
+        else attr = sc.addAttribute(attr, StyleConstants.Underline, false);
+
+        int length = textPane.getDocument().getLength();
+        textPane.setCaretPosition(length);
+        textPane.setCharacterAttributes(attr, false);
+        textPane.replaceSelection(msg);
     }
 }

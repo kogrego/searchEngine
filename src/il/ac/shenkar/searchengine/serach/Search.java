@@ -1,5 +1,6 @@
 package il.ac.shenkar.searchengine.serach;
 
+import il.ac.shenkar.searchengine.utils.Doc;
 import il.ac.shenkar.searchengine.utils.Hits;
 import il.ac.shenkar.searchengine.utils.Posting;
 import il.ac.shenkar.searchengine.utils.Utils;
@@ -181,11 +182,11 @@ public class Search {
         return tokenize(words, parsedWords);
     }
 
-    public AbstractMap.Entry<String, String> showDocument(String filename) throws IOException {
+    public Doc showDocument(Doc doc) throws IOException {
         String sCurrentLine;
-        String doc = "";
+        String content = "";
         String serial = "";
-        filename = "./storage/" + filename;
+        String filename = "./storage/" + doc.getFileName();
         BufferedReader br = new BufferedReader(new FileReader(filename));
         int i = 0;
         while ((sCurrentLine = br.readLine()) != null) {
@@ -193,12 +194,13 @@ public class Search {
                 serial = sCurrentLine.split(" ")[2];
             }
             if(!sCurrentLine.startsWith("#")) {
-                doc += sCurrentLine;
-                doc += "\n";
+                content += sCurrentLine;
+                content += "\n";
             }
             i++;
         }
-        return new AbstractMap.SimpleEntry<>(serial, doc);
+        doc.setContent(content);
+        return doc;
     }
 
     private ArrayList<String> brackets(String[] words, int i) {

@@ -6,6 +6,7 @@ public class Doc {
     private String fileName;
     private String serial;
     private String preview;
+    private String content;
     private boolean isHidden;
 
     public Doc(String fileName) {
@@ -43,6 +44,14 @@ public class Doc {
 
     public void setPreview(String preview) {
         this.preview = preview;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }
 
