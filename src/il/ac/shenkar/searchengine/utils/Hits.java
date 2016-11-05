@@ -2,9 +2,6 @@ package il.ac.shenkar.searchengine.utils;
 
 import java.util.Map;
 
-/**
- * Created by Seymore on 11/4/2016.
- */
 public class Hits {
 
     private int numOfPostings;

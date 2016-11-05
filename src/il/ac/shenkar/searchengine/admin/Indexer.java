@@ -13,8 +13,8 @@ public class Indexer {
     private Map<String, Hits> indexMap;
     private Map<String, Doc> docsMap;
 
-    public Indexer(){
-        indexMap = Utils.getMap();
+    public Indexer() {
+        indexMap = Utils.getIndexMap();
         docsMap = Utils.getDocsMap();
     }
 
@@ -25,13 +25,13 @@ public class Indexer {
         text = text.toLowerCase();
         text = text.replace("\n", " ");
         String[] lines = text.split("\"");
-        for(int i = 0; i < lines.length; i++) {
-            if((lines.length > 1) && (i % 2 != 0)) {
+        for (int i = 0; i < lines.length; i++) {
+            if ((lines.length > 1) && (i % 2 != 0)) {
                 words.add(lines[i]);
             }
-            lines[i] = lines[i].replaceAll("[\\-+\\^:,;?!.()/]"," ");
-            parsedLine = lines[i].replaceAll("  "," ");
-            if(parsedLine == null || parsedLine.isEmpty()) {
+            lines[i] = lines[i].replaceAll("[\\-+\\^:,;?!.()/]", " ");
+            parsedLine = lines[i].replaceAll("  ", " ");
+            if (parsedLine == null || parsedLine.isEmpty()) {
                 continue;
             }
             parsedLine = parsedLine.replace("  ", " ");
@@ -41,29 +41,27 @@ public class Indexer {
         ArrayList<String> uniqueWords = removeDup(words);
         ArrayList<String> goodWords = Utils.blackList(uniqueWords);
 
-        for(String word: goodWords){
+        for (String word : goodWords) {
             int lastIndex = 0;
             while (lastIndex != -1) {
                 String tempWord = word;
-                if(tempWord.split(" ").length == 1) {
+                if (tempWord.split(" ").length == 1) {
                     tempWord = word.replaceAll("\"", "");
                 }
                 lastIndex = text.indexOf(tempWord, lastIndex);
                 if (lastIndex != -1) {
                     String toIndex = text.substring(lastIndex, lastIndex + tempWord.length());
-                    if(toIndex.equals(tempWord)) {
+                    if (toIndex.equals(tempWord)) {
                         if (lastIndex == 0 || text.charAt(lastIndex - 1) == ' ' || text.charAt(lastIndex - 1) == '\n') {
-                            if(indexMap.containsKey(word)) {
+                            if (indexMap.containsKey(word)) {
                                 Hits hit = indexMap.get(word);
-                                if(hit.getPostings().containsKey(doc.getSerial())) {
+                                if (hit.getPostings().containsKey(doc.getSerial())) {
                                     addOccurrence(doc.getSerial(), hit, lastIndex);
-                                }
-                                else {
+                                } else {
                                     addHit(doc.getSerial(), hit, lastIndex);
                                 }
                                 indexMap.put(word, hit);
-                            }
-                            else {
+                            } else {
                                 indexWord(doc.getSerial(), word, lastIndex);
                             }
                         }
@@ -76,18 +74,18 @@ public class Indexer {
 
 
     private void addOccurrence(String fileId, Hits hit, int index) {
-        ArrayList<Integer> occur = hit.getPostings().get(fileId).getOccurences();
+        ArrayList<Integer> occur = hit.getPostings().get(fileId).getHits();
         occur.add(index);
-        hit.getPostings().get(fileId).setOccurences(occur);
-        hit.getPostings().get(fileId).setHits(hit.getPostings().get(fileId).getHits() + 1);
+        hit.getPostings().get(fileId).setHits(occur);
+        hit.getPostings().get(fileId).setNumOfHits(hit.getPostings().get(fileId).getNumOgHits() + 1);
     }
 
     private void addHit(String fileId, Hits hit, int index) {
         ArrayList<Integer> occur = new ArrayList<>();
         occur.add(index);
         Posting posting = new Posting();
-        posting.setOccurences(occur);
-        posting.setHits(1);
+        posting.setHits(occur);
+        posting.setNumOfHits(1);
         Map<String, Posting> postingObj = hit.getPostings();
         postingObj.put(fileId, posting);
         hit.setNumOfPostings(hit.getNumOfPostings() + 1);
@@ -99,8 +97,8 @@ public class Indexer {
         ArrayList<Integer> occur = new ArrayList<>();
         occur.add(index);
         Posting posting = new Posting();
-        posting.setOccurences(occur);
-        posting.setHits(1);
+        posting.setHits(occur);
+        posting.setNumOfHits(1);
         Map<String, Posting> postingObj = new HashMap<>();
         postingObj.put(fileId, posting);
         firstHit.setPostings(postingObj);
@@ -108,7 +106,7 @@ public class Indexer {
         indexMap.put(word, firstHit);
     }
 
-    ArrayList<String> removeDup(ArrayList<String> words){
+    ArrayList<String> removeDup(ArrayList<String> words) {
         Set<String> unique = new HashSet<>(words);
         return new ArrayList<>(unique);
     }
@@ -121,13 +119,12 @@ public class Indexer {
         String title = "";
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
-            if(!line.startsWith("#")) {
-                if(i < 4) {
-                    if(i == 0) {
+            if (!line.startsWith("#")) {
+                if (i < 4) {
+                    if (i == 0) {
                         title += line;
                         line = sc.nextLine();
-                    }
-                    else {
+                    } else {
                         preview += line + '\n';
                     }
                     i++;

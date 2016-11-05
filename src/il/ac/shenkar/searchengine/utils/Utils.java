@@ -2,6 +2,7 @@ package il.ac.shenkar.searchengine.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -9,34 +10,34 @@ import java.util.*;
 public class Utils {
     private static final String[] blackList = {"on", "in", "to", "a", "an", "the", "i", "is", "it", "as",
             "was", "so", "his", "has", "of", ""};
-    private static File index;
-    private static File docs;
-    private static Map<String, Hits> map;
-    private static Map<String, Doc> docsMap;
     private static final String INDEX = "./index.txt";
     private static final String DOCUMENTS = "./documents.txt";
+    private static File indexFile;
+    private static File docsFile;
+    private static Map<String, Hits> indexMap;
+    private static Map<String, Doc> docsMap;
 
-    public static String[] getBlackList() {
+    private static String[] getBlackList() {
         return blackList;
     }
 
-    public static void getIndex() {
-        if (index == null) {
-            index = new File(INDEX);
+    public static void getIndexFile() {
+        if (indexFile == null) {
+            indexFile = new File(INDEX);
         }
     }
 
-    public static void getDocuments() {
-        if (docs == null) {
-            docs = new File(DOCUMENTS);
+    public static void getDocumentsFile() {
+        if (docsFile == null) {
+            docsFile = new File(DOCUMENTS);
         }
     }
 
-    public static Map<String, Hits> getMap() {
-        if (map == null) {
-            map = new HashMap<>();
+    public static Map<String, Hits> getIndexMap() {
+        if (indexMap == null) {
+            indexMap = new HashMap<>();
         }
-        return map;
+        return indexMap;
     }
 
     public static Map<String, Doc> getDocsMap() {
@@ -46,9 +47,12 @@ public class Utils {
         return docsMap;
     }
 
-
     public static ArrayList<String> getStorageFileNames() {
-        return new ArrayList<>(docsMap.keySet());
+        ArrayList<String> fileNames = new ArrayList<>();
+        docsMap.forEach((serial, doc) -> {
+            fileNames.add(doc.getFileName());
+        });
+        return fileNames;
     }
 
     public static File storeFile(File src, Doc doc) throws IOException {
@@ -74,7 +78,7 @@ public class Utils {
 
     public static void saveMapToFile() throws IOException {
         Gson gson = new Gson();
-        String mapString = gson.toJson(map);
+        String mapString = gson.toJson(indexMap);
         BufferedWriter indexOut = new BufferedWriter(new FileWriter(INDEX));
         indexOut.write(mapString);
         indexOut.close();
@@ -83,16 +87,17 @@ public class Utils {
     public static void getMapFromFile() throws IOException, ClassNotFoundException {
         String mapJson = null;
         Gson gson = new Gson();
-        if (index.exists()) {
-            mapJson = new Scanner(index).useDelimiter("\\Z").next();
+        if (indexFile.exists()) {
+            mapJson = new Scanner(indexFile).useDelimiter("\\Z").next();
         } else {
             File indexFile = new File(INDEX);
-            if(indexFile.exists()) {
+            if (indexFile.exists()) {
                 mapJson = new Scanner(indexFile).useDelimiter("\\Z").next();
             }
         }
-        Type mapType = new TypeToken<Map<String, Hits>>(){}.getType();
-        map = gson.fromJson(mapJson, mapType);
+        Type mapType = new TypeToken<Map<String, Hits>>() {
+        }.getType();
+        indexMap = gson.fromJson(mapJson, mapType);
     }
 
     public static void saveDocsToFile() throws IOException {
@@ -106,11 +111,11 @@ public class Utils {
     public static void getDocsFromFile() throws IOException, ClassNotFoundException {
         String mapJson = null;
         Gson gson = new Gson();
-        if (docs.exists()) {
-            mapJson = new Scanner(docs).useDelimiter("\\Z").next();
+        if (docsFile.exists()) {
+            mapJson = new Scanner(docsFile).useDelimiter("\\Z").next();
         } else {
             File postingFile = new File(DOCUMENTS);
-            if(postingFile.exists()) {
+            if (postingFile.exists()) {
                 mapJson = new Scanner(postingFile).useDelimiter("\\Z").next();
             }
         }
@@ -121,11 +126,11 @@ public class Utils {
 
     public static ArrayList<String> blackList(ArrayList<String> words) {
         ArrayList<String> goodWords = new ArrayList<>(words);
-        List<String> blacklist =  Arrays.asList(Utils.getBlackList());
-        for(String word : words){
-            if (blacklist.contains(word)){
+        List<String> blacklist = Arrays.asList(Utils.getBlackList());
+        for (String word : words) {
+            if (blacklist.contains(word)) {
                 goodWords.remove(word);
-                if(!Objects.equals(word, "")) {
+                if (!Objects.equals(word, "")) {
                     String newWord = '"' + word + '"';
                     goodWords.add(newWord);
                 }

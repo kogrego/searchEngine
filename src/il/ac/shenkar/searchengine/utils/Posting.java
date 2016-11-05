@@ -2,26 +2,24 @@ package il.ac.shenkar.searchengine.utils;
 
 import java.util.ArrayList;
 
-/**
- * Created by Seymore on 11/4/2016.
- */
 public class Posting {
-    private int hits;
-    ArrayList<Integer> occurences;
 
-    public int getHits() {
+    private int numOfHits;
+    private ArrayList<Integer> hits;
+
+    public int getNumOgHits() {
+        return numOfHits;
+    }
+
+    public void setNumOfHits(int hits) {
+        this.numOfHits = hits;
+    }
+
+    public ArrayList<Integer> getHits() {
         return hits;
     }
 
-    public void setHits(int hits) {
-        this.hits = hits;
-    }
-
-    public ArrayList<Integer> getOccurences() {
-        return occurences;
-    }
-
-    public void setOccurences(ArrayList<Integer> occurences) {
-        this.occurences = occurences;
+    public void setHits(ArrayList<Integer> occurrences) {
+        this.hits = occurrences;
     }
 }

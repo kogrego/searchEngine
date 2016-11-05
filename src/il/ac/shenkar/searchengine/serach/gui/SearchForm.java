@@ -1,6 +1,5 @@
 package il.ac.shenkar.searchengine.serach.gui;
 
-import javax.naming.directory.SearchResult;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -9,7 +8,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.print.PrinterException;
 import java.io.*;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 
 import il.ac.shenkar.searchengine.serach.Search;
@@ -18,7 +16,7 @@ import il.ac.shenkar.searchengine.utils.Hits;
 import il.ac.shenkar.searchengine.utils.Posting;
 import il.ac.shenkar.searchengine.utils.Utils;
 
-public class Form extends JFrame implements ListSelectionListener {
+public class SearchForm extends JFrame implements ListSelectionListener {
     private JPanel rootPanel;
     private JTextField searchField;
     private JButton searchButton;
@@ -42,7 +40,7 @@ public class Form extends JFrame implements ListSelectionListener {
     private Search search;
 
     @SuppressWarnings({"unchecked", "BoundFieldAssignment"})
-    public Form() {
+    public SearchForm() {
         super("search engine");
         initComponents();
         search = new Search();
@@ -121,11 +119,11 @@ public class Form extends JFrame implements ListSelectionListener {
 
     private void showResults(ArrayList<String> results) {
         resultsLabel.setText(results.size() + " search result(s):");
-        resultsLabel.setForeground(new Color(38,187,171));
+        resultsLabel.setForeground(new Color(38, 187, 171));
         DefaultListModel listModel = new DefaultListModel();
         ListCellRenderer renderer = new ListItemRenderer();
         searchResults.setCellRenderer(renderer);
-        results.forEach((result)-> {
+        results.forEach((result) -> {
             Doc doc = Utils.getDocsMap().get(result);
             listModel.addElement(doc);
         });
@@ -135,7 +133,7 @@ public class Form extends JFrame implements ListSelectionListener {
 
     private void noResults() {
         searchResults.setModel(new DefaultListModel());
-        resultsLabel.setForeground(new Color(187,117,125));
+        resultsLabel.setForeground(new Color(187, 117, 125));
         resultsLabel.setText("no results");
         searchResults.removeListSelectionListener(this);
     }
@@ -143,13 +141,13 @@ public class Form extends JFrame implements ListSelectionListener {
     private void highlight(ArrayList<String> words, String index) {
         Highlighter highlighter = showDocument.getHighlighter();
         Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.yellow);
-        words.forEach((word)->{
-            Hits hit =  Utils.getMap().get(word);
+        words.forEach((word) -> {
+            Hits hit = Utils.getIndexMap().get(word);
             String tempWord = word.replaceAll("\"", "");
-            if(hit != null) {
+            if (hit != null) {
                 Posting posting = hit.getPostings().get(index);
                 if (posting != null) {
-                    ArrayList<Integer> locations = posting.getOccurences();
+                    ArrayList<Integer> locations = posting.getHits();
                     locations.forEach((location) -> {
                         try {
                             highlighter.addHighlight(location, location + tempWord.length(), painter);
@@ -174,7 +172,7 @@ public class Form extends JFrame implements ListSelectionListener {
             searchResults.removeListSelectionListener(this);
             if (doc != null) {
                 showDocument.setText(doc.getContent());
-                highlight(searchTerms,doc.getSerial());
+                highlight(searchTerms, doc.getSerial());
                 docScrollPanel.setBorder(BorderFactory.createEmptyBorder());
                 docPanel.setVisible(true);
                 this.setContentPane(docPanel);
@@ -196,15 +194,13 @@ public class Form extends JFrame implements ListSelectionListener {
         }
     }
 
-    private void appendToPane(JTextPane textPane, String msg, Color color, boolean shouldUnderline)
-    {
+    private void appendToPane(JTextPane textPane, String msg, Color color, boolean shouldUnderline) {
         StyleContext sc = StyleContext.getDefaultStyleContext();
         AttributeSet attr = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, color);
 
-        if(shouldUnderline) {
+        if (shouldUnderline) {
             attr = sc.addAttribute(attr, StyleConstants.Underline, true);
-        }
-        else attr = sc.addAttribute(attr, StyleConstants.Underline, false);
+        } else attr = sc.addAttribute(attr, StyleConstants.Underline, false);
 
         int length = textPane.getDocument().getLength();
         textPane.setCaretPosition(length);

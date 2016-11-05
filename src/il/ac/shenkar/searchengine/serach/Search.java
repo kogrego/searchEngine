@@ -1,21 +1,16 @@
 package il.ac.shenkar.searchengine.serach;
 
-import il.ac.shenkar.searchengine.utils.Doc;
-import il.ac.shenkar.searchengine.utils.Hits;
-import il.ac.shenkar.searchengine.utils.Posting;
-import il.ac.shenkar.searchengine.utils.Utils;
-
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import il.ac.shenkar.searchengine.utils.Doc;
+import il.ac.shenkar.searchengine.utils.Hits;
+import il.ac.shenkar.searchengine.utils.Utils;
+
 public class Search {
 
     private Map<String, Hits> indexMap;
-
-    public Search() {
-        this.indexMap = Utils.getMap();
-    }
 
     private ArrayList<String> tokenize(String[] words, ArrayList<String> parsedWords) throws IllegalStateException {
         if (indexMap == null) {
@@ -28,18 +23,18 @@ public class Search {
         while (i < words.length) {
             switch (words[i]) {
                 case "NOT":
-                    if(results.size() >= 0){
+                    if (results.size() >= 0) {
                         results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
                     }
                     if (words[i + 1].startsWith("(")) {
-                        ArrayList<String> newWords = brackets(words, i+1);
+                        ArrayList<String> newWords = brackets(words, i + 1);
                         results.removeAll(tokenize(newWords.toArray(new String[newWords.size()]), parsedWords));
-                        i+=(newWords.size()+1);
+                        i += (newWords.size() + 1);
                     } else if (words[i + 1].startsWith("\"")) {
-                        tempWord = apostrophes(words, i+1);
+                        tempWord = apostrophes(words, i + 1);
                         parsedWords.add(tempWord);
                         results = getResults(results, tempWord, "NOT", notFlag);
-                        i+=(tempWord.split(" ").length + 1);
+                        i += (tempWord.split(" ").length + 1);
                     } else {
                         tempWord = words[i + 1].toLowerCase();
                         parsedWords.add(tempWord);
@@ -48,47 +43,47 @@ public class Search {
                     }
                     break;
                 case "AND":
-                    if(words[i + 1].equals("NOT")){
+                    if (words[i + 1].equals("NOT")) {
                         i++;
                         notFlag = true;
                     }
                     if (words[i + 1].startsWith("(")) {
-                        ArrayList<String> newWords = brackets(words, i+1);
-                        if(notFlag){
+                        ArrayList<String> newWords = brackets(words, i + 1);
+                        if (notFlag) {
                             newWords = deMorgan(newWords);
                         }
                         ArrayList<String> list = new ArrayList<>();
                         ArrayList<String> tempList = tokenize(newWords.toArray(new String[newWords.size()]), parsedWords);
                         list.addAll(tempList.stream().filter(tempList::contains).collect(Collectors.toList()));
                         results.addAll(list);
-                        i+=(newWords.size()+1);
+                        i += (newWords.size() + 1);
                     } else if (words[i + 1].startsWith("\"")) {
-                        tempWord = apostrophes(words, i+1);
-                        if(!notFlag) {
+                        tempWord = apostrophes(words, i + 1);
+                        if (!notFlag) {
                             parsedWords.add(tempWord);
                         }
                         results = getResults(results, tempWord, "AND", notFlag);
-                        i+=(tempWord.split(" ").length + 1);
+                        i += (tempWord.split(" ").length + 1);
                     } else {
                         tempWord = words[i + 1].toLowerCase();
-                        if(!notFlag) {
+                        if (!notFlag) {
                             parsedWords.add(tempWord);
                         }
                         results = getResults(results, tempWord, "AND", notFlag);
                         i += 2;
                     }
-                    if(notFlag) {
+                    if (notFlag) {
                         notFlag = false;
                     }
                     break;
                 case "OR":
-                    if(words[i + 1].equals("NOT")){
+                    if (words[i + 1].equals("NOT")) {
                         i++;
                         notFlag = true;
                     }
                     if (words[i + 1].startsWith("(")) {
-                        ArrayList<String> newWords = brackets(words, i+1);
-                        if(notFlag){
+                        ArrayList<String> newWords = brackets(words, i + 1);
+                        if (notFlag) {
                             newWords = deMorgan(newWords);
                             notFlag = false;
                         }
@@ -97,23 +92,23 @@ public class Search {
                         set.addAll(tempList);
                         set.addAll(results);
                         results.addAll(set);
-                        i+=(newWords.size()+1);
+                        i += (newWords.size() + 1);
                     } else if (words[i + 1].startsWith("\"")) {
-                        tempWord = apostrophes(words, i+1);
-                        if(!notFlag) {
+                        tempWord = apostrophes(words, i + 1);
+                        if (!notFlag) {
                             parsedWords.add(tempWord);
                         }
                         results = getResults(results, tempWord, "OR", notFlag);
-                        i+=(tempWord.split(" ").length + 1);
+                        i += (tempWord.split(" ").length + 1);
                     } else {
                         tempWord = words[i + 1].toLowerCase();
-                        if(!notFlag) {
+                        if (!notFlag) {
                             parsedWords.add(tempWord);
                         }
                         results = getResults(results, tempWord, "OR", notFlag);
                         i += 2;
                     }
-                    if(notFlag){
+                    if (notFlag) {
                         notFlag = false;
                     }
                     break;
@@ -125,12 +120,12 @@ public class Search {
                         set.addAll(tempList);
                         set.addAll(results);
                         results.addAll(set);
-                        i+=newWords.size();
+                        i += newWords.size();
                     } else if (words[i].startsWith("\"")) {
                         tempWord = apostrophes(words, i);
                         parsedWords.add(tempWord);
                         results = getResults(results, tempWord, "OR", false);
-                        i+=tempWord.split(" ").length;
+                        i += tempWord.split(" ").length;
                     } else {
                         tempWord = words[i].toLowerCase();
                         parsedWords.add(tempWord);
@@ -140,67 +135,12 @@ public class Search {
                     break;
             }
         }
-        for(String result: results){
-            if(Utils.getDocsMap().get(result).isHidden()){
+        for (String result : results) {
+            if (Utils.getDocsMap().get(result).isHidden()) {
                 results.remove(result);
             }
         }
         return new ArrayList<>(results);
-    }
-
-    private ArrayList<String> deMorgan(ArrayList<String> newWords) {
-        int i = 0;
-        String[] words = newWords.toArray(new String[newWords.size()]);
-        ArrayList<String> deMorgan = new ArrayList<>();
-        while (i < words.length){
-            switch (words[i]){
-                case "OR":
-                    deMorgan.add("AND");
-                    break;
-                case "NOT":
-                    break;
-                case "AND":
-                    deMorgan.add("OR");
-                    break;
-                default:
-                    if(i == 0 || !Objects.equals(words[i - 1], "NOT")){
-                        deMorgan.add("NOT");
-                    }
-                    deMorgan.add(words[i]);
-                    break;
-            }
-            i++;
-        }
-        return deMorgan;
-    }
-
-    public ArrayList<String> search(String term, ArrayList<String> parsedWords) {
-        term = term.replace("(", " (");
-        term = term.replace(")", ") ");
-        term = term.replace("  ", " ");
-        String[] words = term.split(" ");
-        return tokenize(words, parsedWords);
-    }
-
-    public Doc showDocument(Doc doc) throws IOException {
-        String sCurrentLine;
-        String content = "";
-        String serial = "";
-        String filename = "./storage/" + doc.getFileName();
-        BufferedReader br = new BufferedReader(new FileReader(filename));
-        int i = 0;
-        while ((sCurrentLine = br.readLine()) != null) {
-            if(i == 2){
-                serial = sCurrentLine.split(" ")[2];
-            }
-            if(!sCurrentLine.startsWith("#")) {
-                content += sCurrentLine;
-                content += "\n";
-            }
-            i++;
-        }
-        doc.setContent(content);
-        return doc;
     }
 
     private ArrayList<String> brackets(String[] words, int i) {
@@ -209,13 +149,13 @@ public class Search {
         bracket.push('(');
         newWords.add(words[i].replace("(", ""));
         i++;
-        while (bracket.size() > 0){
+        while (bracket.size() > 0) {
             String temp = words[i];
-            if(temp.startsWith("(")){
+            if (temp.startsWith("(")) {
                 bracket.push('(');
             }
-            if(temp.endsWith(")")){
-                if(bracket.size() == 1){
+            if (temp.endsWith(")")) {
+                if (bracket.size() == 1) {
                     temp = temp.replace(")", "");
                 }
                 bracket.pop();
@@ -226,7 +166,7 @@ public class Search {
         return newWords;
     }
 
-    private String apostrophes(String[] words, int i){
+    private String apostrophes(String[] words, int i) {
         String temp = "";
         while (!words[i].endsWith("\"")) {
             temp += words[i];
@@ -244,19 +184,66 @@ public class Search {
         return temp;
     }
 
-    private Set<String> getResults(Set<String> results, String searchTerm, String op, boolean notFlag){
+    private ArrayList<String> deMorgan(ArrayList<String> newWords) {
+        int i = 0;
+        String[] words = newWords.toArray(new String[newWords.size()]);
+        ArrayList<String> deMorgan = new ArrayList<>();
+        while (i < words.length) {
+            switch (words[i]) {
+                case "OR":
+                    deMorgan.add("AND");
+                    break;
+                case "NOT":
+                    break;
+                case "AND":
+                    deMorgan.add("OR");
+                    break;
+                default:
+                    if (i == 0 || !Objects.equals(words[i - 1], "NOT")) {
+                        deMorgan.add("NOT");
+                    }
+                    deMorgan.add(words[i]);
+                    break;
+            }
+            i++;
+        }
+
+        return deMorgan;
+    }
+
+    private Set<String> defaultOp(Hits map, boolean notFlag, Set<String> results) {
+        if (map != null) {
+            if (notFlag) {
+                Set<String> tempResults = Utils.getDocsMap().keySet();
+                ArrayList<String> temp = new ArrayList<>(tempResults);
+                map.getPostings().forEach((key, value) -> temp.remove(key));
+                results.addAll(temp);
+            } else {
+                Set<String> tempResults = map.getPostings().keySet();
+                ArrayList<String> temp = new ArrayList<>(tempResults);
+                results.addAll(temp);
+            }
+        } else {
+            if (notFlag) {
+                results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
+            }
+        }
+        return results;
+    }
+
+    private Set<String> getResults(Set<String> results, String searchTerm, String op, boolean notFlag) {
         Hits map = indexMap.get(searchTerm);
-        switch(op){
+        switch (op) {
             case "NOT":
                 if (map != null) {
                     Set<String> finalResults = results;
-                    map.getPostings().forEach((key, value)-> finalResults.remove(key));
+                    map.getPostings().forEach((key, value) -> finalResults.remove(key));
                     results = finalResults;
                 }
                 break;
             case "AND":
                 if (map != null) {
-                    if(notFlag) {
+                    if (notFlag) {
                         ArrayList<String> tempResults = new ArrayList<>();
                         tempResults.addAll(new ArrayList<>(Utils.getStorageFileNames()));
                         Set<String> finalResults = results;
@@ -284,23 +271,37 @@ public class Search {
         return results;
     }
 
-    private Set<String> defaultOp(Hits map, boolean notFlag, Set<String> results) {
-        if (map != null) {
-            if (notFlag) {
-                Set<String> tempResults = Utils.getDocsMap().keySet();
-                ArrayList<String> temp = new ArrayList<>(tempResults);
-                map.getPostings().forEach((key, value) -> temp.remove(key));
-                results.addAll(temp);
-            } else {
-                Set<String> tempResults = map.getPostings().keySet();
-                ArrayList<String> temp = new ArrayList<>(tempResults);
-                results.addAll(temp);
-            }
-        } else {
-            if (notFlag) {
-                results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
-            }
-        }
-        return results;
+    public Search() {
+        this.indexMap = Utils.getIndexMap();
     }
+
+    public ArrayList<String> search(String term, ArrayList<String> parsedWords) {
+        term = term.replace("(", " (");
+        term = term.replace(")", ") ");
+        term = term.replace("  ", " ");
+        String[] words = term.split(" ");
+        return tokenize(words, parsedWords);
+    }
+
+    public Doc showDocument(Doc doc) throws IOException {
+        String sCurrentLine;
+        String content = "";
+        String serial = "";
+        String filename = "./storage/" + doc.getFileName();
+        BufferedReader br = new BufferedReader(new FileReader(filename));
+        int i = 0;
+        while ((sCurrentLine = br.readLine()) != null) {
+            if (i == 2) {
+                serial = sCurrentLine.split(" ")[2];
+            }
+            if (!sCurrentLine.startsWith("#")) {
+                content += sCurrentLine;
+                content += "\n";
+            }
+            i++;
+        }
+        doc.setContent(content);
+        return doc;
+    }
+
 }

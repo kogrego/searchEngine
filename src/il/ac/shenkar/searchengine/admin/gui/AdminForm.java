@@ -11,7 +11,7 @@ import il.ac.shenkar.searchengine.admin.Indexer;
 import il.ac.shenkar.searchengine.utils.Doc;
 import il.ac.shenkar.searchengine.utils.Utils;
 
-public class Admin extends JFrame{
+public class AdminForm extends JFrame{
     private JPanel rootPanel;
     private JButton loadButton;
     private JLabel title;
@@ -22,7 +22,7 @@ public class Admin extends JFrame{
     private JButton hideButton;
     private CenteredFileChooser fileChooser;
 
-    public Admin() {
+    public AdminForm() {
         super("search engine - admin");
         initComponents();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

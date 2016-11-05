@@ -15,12 +15,8 @@ public class Doc {
         this.isHidden = false;
     }
 
-    public void show() {
-        isHidden = false;
-    }
-
-    public void hide() {
-        isHidden = true;
+    void setSerial() {
+        this.serial = String.valueOf(System.currentTimeMillis());
     }
 
     public String getFileName() {
@@ -31,32 +27,36 @@ public class Doc {
         return serial;
     }
 
-    public void setSerial() {
-        this.serial = String.valueOf(System.currentTimeMillis());
-    }
-
-    public boolean isHidden() {
-        return isHidden;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getPreview() {
         return preview;
     }
 
-    public void setPreview(String preview) {
-        this.preview = preview;
-    }
-
     public String getContent() {
         return content;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public void show() {
+        isHidden = false;
+    }
+
+    public void hide() {
+        isHidden = true;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setPreview(String preview) {
+        this.preview = preview;
     }
 
     public void setContent(String content) {
