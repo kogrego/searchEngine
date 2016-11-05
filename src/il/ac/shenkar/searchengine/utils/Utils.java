@@ -10,8 +10,8 @@ import java.util.*;
 public class Utils {
     private static final String[] blackList = {"on", "in", "to", "a", "an", "the", "i", "is", "it", "as",
             "was", "so", "his", "has", "of", ""};
-    private static final String INDEX = "./index.txt";
-    private static final String DOCUMENTS = "./documents.txt";
+    private static final String INDEX = "./index.json";
+    private static final String DOCUMENTS = "./documents.json";
     private static File indexFile;
     private static File docsFile;
     private static Map<String, Hits> indexMap;

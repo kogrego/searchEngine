@@ -174,6 +174,19 @@ public class SearchForm extends JFrame implements ListSelectionListener {
         helpItem.setToolTipText("Hoe to use Search Engine");
         helpItem.addActionListener((ActionEvent event) -> {
             JFrame helpFrame = new JFrame("Help");
+            String helpText = "Simple Search\n" +
+                    "Write your search words in the text window and click on the search button\n" +
+                    "to start the search Search results appear as a list of names of the documents\n" +
+                    "and their summaries.Clicking on the name of the document or its summary will open\n" +
+                    "the full document on a new page."  +
+                    "\n\nThe following operators are available: AND, OR, NOT, ()" +
+                    "\n\nQuery example: up AND((twist OR shout) OR NOT up)";
+            JTextArea textArea = new JTextArea(helpText);
+            Font f = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
+            textArea.setFont(f);
+            textArea.setEditable(false);
+            textArea.setMargin(new Insets(30, 30, 30, 30));
+            helpFrame.add(textArea, BorderLayout.CENTER);
             helpFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
             helpFrame.setSize(640, 480);
             helpFrame.setBackground(Color.white);
@@ -183,7 +196,10 @@ public class SearchForm extends JFrame implements ListSelectionListener {
 
         aboutItem.addActionListener((ActionEvent event) -> {
             JFrame aboutFrame = new JFrame("About");
-            JTextArea textArea = new JTextArea("Created by Dassi Rosen and Gregory K\nReleased November 2016");
+            String aboutText = "Created by Dassi Rosen and Gregory Kondratenko\nReleased November 2016";
+            JTextArea textArea = new JTextArea(aboutText);
+            Font f = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
+            textArea.setFont(f);
             textArea.setEditable(false);
             textArea.setMargin(new Insets(30, 30, 30, 30));
             aboutFrame.add(textArea, BorderLayout.CENTER);
