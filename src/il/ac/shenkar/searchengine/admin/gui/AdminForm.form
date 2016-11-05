@@ -38,6 +38,7 @@
                 </constraints>
                 <properties>
                   <background color="-14238805"/>
+                  <focusPainted value="false"/>
                   <font swing-font="Button.font"/>
                   <foreground color="-1"/>
                   <text value="Load File(s)"/>
@@ -52,6 +53,7 @@
                 </constraints>
                 <properties>
                   <background color="-14238805"/>
+                  <focusPainted value="false"/>
                   <foreground color="-1"/>
                   <text value="Show File(s)"/>
                   <toolTipText value=""/>
@@ -65,6 +67,7 @@
                 </constraints>
                 <properties>
                   <background color="-4491907"/>
+                  <focusPainted value="false"/>
                   <foreground color="-1"/>
                   <text value=" Hide File(s)"/>
                   <toolTipText value=""/>

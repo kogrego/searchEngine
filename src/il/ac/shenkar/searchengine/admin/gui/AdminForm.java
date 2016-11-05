@@ -2,6 +2,8 @@ package il.ac.shenkar.searchengine.admin.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -57,6 +59,18 @@ public class AdminForm extends JFrame{
             resultLabel.setText(msg);
         });
 
+        loadButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                loadButton.setBackground(new Color(37, 156, 140));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                loadButton.setBackground(new Color(38,187,171));
+            }
+        });
+
         hideButton.addActionListener(e -> {
             fileChooser.setCurrentDirectory(new File("./storage"));
             fileChooser.setDialogTitle("Search Engine - hide");
@@ -81,6 +95,18 @@ public class AdminForm extends JFrame{
             }
         });
 
+        hideButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                hideButton.setBackground(new Color(146, 86, 94));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                hideButton.setBackground(new Color(187,117,125));
+            }
+        });
+
         showButton.addActionListener(e -> {
             fileChooser.setCurrentDirectory(new File("./storage"));
             fileChooser.setDialogTitle("Search Engine - show");
@@ -102,6 +128,18 @@ public class AdminForm extends JFrame{
                 Utils.saveDocsToFile();
             } catch (IOException e1) {
                 e1.printStackTrace();
+            }
+        });
+
+        showButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                showButton.setBackground(new Color(37, 156, 140));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                showButton.setBackground(new Color(38,187,171));
             }
         });
     }

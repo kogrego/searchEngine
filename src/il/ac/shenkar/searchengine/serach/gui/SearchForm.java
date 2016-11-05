@@ -68,6 +68,19 @@ public class SearchForm extends JFrame implements ListSelectionListener {
             }
         });
 
+        searchButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                searchButton.setBackground(new Color(37, 156, 140));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                searchButton.setBackground(new Color(38,187,171));
+            }
+        });
+
+
         backButton.addActionListener(e -> {
             this.setContentPane(rootPanel);
             searchResults.clearSelection();
@@ -79,6 +92,19 @@ public class SearchForm extends JFrame implements ListSelectionListener {
             }
         });
 
+        backButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                backButton.setBackground(new Color(37, 156, 140));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                backButton.setBackground(new Color(38,187,171));
+            }
+        });
+
+
         printButton.addActionListener(e -> {
             try {
                 showDocument.print();
@@ -86,6 +112,19 @@ public class SearchForm extends JFrame implements ListSelectionListener {
                 e1.printStackTrace();
             }
         });
+
+        printButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                printButton.setBackground(new Color(37, 156, 140));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                printButton.setBackground(new Color(38,187,171));
+            }
+        });
+
 
         searchResults.addMouseMotionListener(new MouseMotionListener() {
             @Override
@@ -217,6 +256,8 @@ public class SearchForm extends JFrame implements ListSelectionListener {
             searchResults.removeListSelectionListener(this);
             if (doc != null) {
                 showDocument.setText(doc.getContent());
+                backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                printButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 highlight(searchTerms, doc.getSerial());
                 docScrollPanel.setBorder(BorderFactory.createEmptyBorder());
                 docPanel.setVisible(true);
