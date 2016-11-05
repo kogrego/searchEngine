@@ -22,14 +22,16 @@ public class AdminForm extends JFrame{
     private JButton hideButton;
     private CenteredFileChooser fileChooser;
 
-    public AdminForm() {
-        super("search engine - admin");
+    public AdminForm() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+        super("Search Engine - admin");
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         initComponents();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         loadButton.addActionListener(e -> {
             fileChooser.setCurrentDirectory(new File("./input"));
             fileChooser.setDialogTitle("Search Engine - load");
+            fileChooser.setApproveButtonText("Load");
             fileChooser.showOpenDialog(loadButton);
             File[] files = fileChooser.getSelectedFiles();
             String msg = "";
@@ -58,6 +60,7 @@ public class AdminForm extends JFrame{
         hideButton.addActionListener(e -> {
             fileChooser.setCurrentDirectory(new File("./storage"));
             fileChooser.setDialogTitle("Search Engine - hide");
+            fileChooser.setApproveButtonText("Hide");
             fileChooser.showOpenDialog(hideButton);
             File[] files = fileChooser.getSelectedFiles();
             Map<String, Doc> posting = Utils.getDocsMap();
@@ -81,6 +84,7 @@ public class AdminForm extends JFrame{
         showButton.addActionListener(e -> {
             fileChooser.setCurrentDirectory(new File("./storage"));
             fileChooser.setDialogTitle("Search Engine - show");
+            fileChooser.setApproveButtonText("Show");
             fileChooser.showOpenDialog(showButton);
             File[] files = fileChooser.getSelectedFiles();
             Map<String, Doc> posting = Utils.getDocsMap();

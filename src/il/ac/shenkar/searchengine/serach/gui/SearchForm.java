@@ -40,8 +40,9 @@ public class SearchForm extends JFrame implements ListSelectionListener {
     private Search search;
 
     @SuppressWarnings({"unchecked", "BoundFieldAssignment"})
-    public SearchForm() {
+    public SearchForm() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
         super("search engine");
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         initComponents();
         search = new Search();
         searchTerms = new ArrayList<>();
@@ -113,6 +114,7 @@ public class SearchForm extends JFrame implements ListSelectionListener {
 
         createMenuBar();
         resultsScrollPanel.setBorder(BorderFactory.createEmptyBorder());
+        searchButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         setContentPane(rootPanel);
         setVisible(true);
@@ -142,7 +144,7 @@ public class SearchForm extends JFrame implements ListSelectionListener {
 
         aboutItem.addActionListener((ActionEvent event) -> {
             JFrame aboutFrame = new JFrame("About");
-            JTextArea textArea = new JTextArea("Created by Dassi Rosen and Gregory K\n Released November 2016");
+            JTextArea textArea = new JTextArea("Created by Dassi Rosen and Gregory K\nReleased November 2016");
             textArea.setEditable(false);
             textArea.setMargin(new Insets(30, 30, 30, 30));
             aboutFrame.add(textArea, BorderLayout.CENTER);
