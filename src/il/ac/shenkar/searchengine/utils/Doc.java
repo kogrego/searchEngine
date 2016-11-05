@@ -5,6 +5,7 @@ public class Doc {
 
     private String fileName;
     private String serial;
+    private String title;
     private String preview;
     private String content;
     private boolean isHidden;
@@ -36,6 +37,14 @@ public class Doc {
 
     public boolean isHidden() {
         return isHidden;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getPreview() {

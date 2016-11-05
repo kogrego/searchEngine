@@ -190,7 +190,7 @@ public class Form extends JFrame implements ListSelectionListener {
             renderer.setFont(new Font("sans-serif", Font.PLAIN, 18));
             String fileName = ((Doc) value).getFileName();
             String preview = ((Doc) value).getPreview();
-            appendToPane(renderer, "\n" + fileName + "\n\n", Color.blue, true);
+            appendToPane(renderer, "\n" + fileName + "\n", Color.blue, true);
             appendToPane(renderer, preview + "\n", Color.black, false);
             return renderer;
         }

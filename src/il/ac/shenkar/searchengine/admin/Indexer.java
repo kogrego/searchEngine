@@ -118,17 +118,25 @@ public class Indexer {
         String text = "";
         int i = 0;
         String preview = "";
+        String title = "";
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
             if(!line.startsWith("#")) {
-                if(i < 3) {
-                    preview += line + '\n';
+                if(i < 4) {
+                    if(i == 0) {
+                        title += line;
+                        line = sc.nextLine();
+                    }
+                    else {
+                        preview += line + '\n';
+                    }
                     i++;
                 }
                 text += line;
                 text += " ";
             }
         }
+        doc.setTitle(title);
         doc.setPreview(preview);
         return text;
     }
