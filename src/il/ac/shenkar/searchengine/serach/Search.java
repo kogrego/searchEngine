@@ -228,7 +228,7 @@ public class Search {
             }
         } else {
             if (notFlag) {
-                results.addAll(new ArrayList<>(Utils.getStorageFileNames()));
+                results.addAll(new ArrayList<>(Utils.getDocsMap().keySet()));
             }
         }
         return results;
